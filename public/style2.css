@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap');
+
+#dropdown{
+    padding-left: 50px;
+ }
+ .navbarNav{
+    padding-left: 40px;
+ }
+ @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap');
+
+ body {
+     font-family: 'Poppins', sans-serif;
+     background-color: #f0e5c7;
+     color: #333;
+     margin: 0;
+     padding: 0;
+ }
+ 
+ #admin_header {
+     width: 100%;
+     height: 70px;
+     background-color: #f0e5c7;
+     margin: 0;
+     padding: 0;
+     position: fixed;
+     top: 0;
+     left: 0;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     color: #f0e5c7;
+ }
+ 
+ #admin_logo {
+     color: #c3073f;
+     font-size: 45px;
+     padding-top: 4px;
+     padding-left: 10px;
+     font-family: 'Poppins', sans-serif;
+ }
+ 
+ #middle-text {
+     color: black;
+     padding-left: 43%;
+     font-size: 25px;
+ }
+ 
+ #right-text {
+     color: black;
+     text-decoration: none;
+     padding-right: 20px;
+     font-weight: 600;
+ }
+ 
+ .form-container {
+     padding-top: 10px;
+     width: 40%;
+     margin: 0 auto;
+ }
+ #admin-form{
+    margin-top: 100px;
+ }
+ form {
+     background-color: #fff;
+     padding: 20px;
+     border-radius: 10px;
+     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+ }
+ 
+ .admin-form-1, .admin-form-2 {
+     padding-left: 0;
+ }
+ 
+ input[type="text"], input[type="date"], select {
+     width: 100%;
+     padding: 10px;
+     margin: 5px 0 20px 0;
+     border: none;
+     border-radius: 5px;
+     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+     font-size: 16px;
+ }
+ 
+ #admin-submit {
+     width: 100%;
+     padding: 10px;
+     background-color: #c3073f;
+     color: #fff;
+     border: none;
+     border-radius: 5px;
+     cursor: pointer;
+     font-size: 18px;
+ }
+ 
+ #admin-image {
+     display: block;
+     margin: 20px auto;
+     max-width: 90%;
+ }
+ 

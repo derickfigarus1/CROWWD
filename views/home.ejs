@@ -3,9 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Homepage</title>
+    <link rel="stylesheet" href="/style3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 </head>
 <body>
-    <h1>home page</h1>
+        <div id="header">
+            <div class="container">
+                
+                <a class="logo" href="index.html">crowwd</a>
+                <div class="box">
+                    <input type="text" placeholder="Search...">
+                    <a href="#">
+                    <i class="fa-solid fa-magnifying-glass" style="color: #c3073f;"></i></a>
+                </div>
+            </div>
+            <div id="datepicker">
+                <form >
+                    <label for="from-date">From  </label>
+                    <input type="date" id="from-date" name="from-date">
+                    <label for="to-date">To</label>
+                    <input type="date" id="to-date" name="to-date">
+                    <button type="submit" id="go">Go</button>
+                </form>
+            </div>
+            <div class="dropdown">
+                <h3 id="dropdown-text">Select a city</h3>
+                <select name="cities" id="cities">
+                    <option value="Aluva">Aluva</option>
+                    <option value="Angamaly">Angamaly</option>
+                    <option value="Ernakulam">Ernakulam</option>
+                    <option value="Perumbavoor">Perumbavoor</option>
+                  </select>
+            </div>
+            <a href="" class="logout-home">Logout</a>
+        
+    </div>
+    <div class="container-middle">
+        <div class="carousel" id="carousel"></div>
+
+        <div class="nav">
+            <button id="prev">Prev</button>
+            <button id="next">Next</button>
+        </div>
+       
+        
+    </div>
+    <div class="image-container">
+        <img id="image" src="image1.png" alt="Image 1">
+        <img id="image" src="image2.png" alt="Image 2">
+        <img id="image" src="image3.png" alt="Image 3">
+        <img id="image" src="image4.png" alt="Image 4">
+        <img id="image" src="image5.png" alt="Image 5">
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
