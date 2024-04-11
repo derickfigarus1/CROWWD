@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>admin dashboard</title>
+    <link rel="stylesheet" href="/style2.css">
+</head>
+<body id="admin">
+    <div id="admin_header">
+        <h1 id="admin_logo">crowwd</h1>
+        <span id="middle-text">hey <%= name %>!</span>
+        <a id="right-text" href="login.ejs">logout</a>
+    </div>
+    <div id="admin-form">
+      <form action="/submit" method="post" enctype="multipart/form-data" class="form-container">
+         <h2 style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">General Information</h2>
+         <div class="admin-form-1 " style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;font-weight: 400;color: #6f2232;">
+            <h3>Organiser's name</h3>
+            <input type="text" name="textbox1" placeholder="Enter your name" id="admin-textbox"><br>
+            <h3>Contact number</h3>
+            <input type="text" name="textbox2" placeholder="Enter your phone" id="admin-textbox"><br>
+            <h3>Organiser's address</h3>
+           <input type="text" name="textbox3" placeholder="Enter you address" id="admin-textbox"><br>
+         </div>
+         <h2 style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">About The Event</h2>
+   
+         <div class="admin-form-2" style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;font-weight: 400;color: #6f2232;">
+            <h3>Name of the event</h3>
+            <input type="text" name="textbox4" placeholder="Enter the name for the event" id="admin-textbox">
+           <select name="dropdown1">
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+             </select>
+            <br>
+            <h3>Description of the event</h3>
+           <input type="text" name="textbox5" placeholder="Text Box 2" id="admin-textbox">
+           <select name="dropdown2">
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            </select>
+           <h3>Date of the event</h3>
+           <input type="date" name="datePicker">
+           
+            <br>
+            <h3>Event venue</h3>
+           <input type="text" name="textbox6" placeholder="Text Box 2" id="admin-textbox"><br>
+           <h3>Nearest bus point</h3>
+           <input type="text" name="textbox7" placeholder="Text Box 2"><br>
+           <h3>Nearest railway station</h3>
+           <input type="text" name="textbox8" placeholder="Text Box 2"><br>
+           <h3>Nearest airport</h3>
+           <input type="text" name="textbox9" placeholder="Text Box 2"><br>
+           <!-- Add more text boxes as needed -->
+           <h3>Upload images of the event</h3>
+           <input type="file" name="imageUploader">
+            <br>
+           <br>
+           <button type="submit" id="admin-submit">Submit</button>
+         </div>
+           
+       </form>
+    </div>
+    
+    <img id="admin-image" src="multicultural-people-crowd-diverse-person-group-vector-34881635.png" width="900">
+</body>
+</html>

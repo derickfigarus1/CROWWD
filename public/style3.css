@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap');
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+   
+}
+
+
+#header {
+    width: 100%;
+     height: 90px;
+     background:#1A1A1D;
+     margin: 0;
+     padding: 0;
+     position: fixed;
+     top: 0;
+     left: 0;
+     display: flex;
+     justify-content: flex-start;
+     align-items: center;
+} 
+.logo{
+    color: #c3073f;
+    font-size: 2.5vw; /* Responsive font size */
+    padding-top: 4px;
+    padding-left: 10px;
+    float: left;
+    font-family: 'Poppins', sans-serif;
+    margin-right: auto;
+    text-decoration: none;
+    margin-right: 80px;
+    font-weight: bold;
+}
+.box{
+    height: 20px;
+    display: flex;
+    cursor: pointer;
+    padding: 15px 20px;
+    border-radius: 30px;
+    align-items: center;
+    box-shadow:  0 10px 25px rgba(0,0,0,0.3);
+    background-color: #f0e5c7;
+    margin-left: auto;
+    margin-top: 12px;
+}
+.box:hover input{
+    width: 400px;
+}
+.box input{
+    width: 0;
+    outline: none;
+    border:none;
+    font-weight: 500;
+    transition: 0.8s;
+    background: transparent;
+
+}
+.box a .fas{
+    font-size: 18px;
+}
+
+#datepicker{
+    padding-left: 50px;
+}
+form{
+    color: #4E4E50;
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+}
+#go{
+    border-radius: 10px;
+    font-size: 20px;
+    font-family: 'Poppins', sans-serif;
+    color: #c3073f;
+    font-weight: bold;
+}
+
+.dropdown {
+        position: fixed;
+        right: 480px;
+        display: flex; 
+        align-items: center; 
+        justify-content: space-between;
+        gap: 20px;
+        color: #f0e5c7;
+ 
+    }
+.logout-home{
+    position: fixed;
+    right: 50px;
+    text-decoration: none;
+    color: #c3073f;
+    font-size: 20px;
+    font-family: 'Poppins', sans-serif;
+}
+
+@media (max-width: 768px) {
+    .logo {
+        font-size: 4vw; /* Adjust font size for smaller screens */
+    }
+
+    .box {
+        margin-top: 10px; /* Adjust margins for smaller screens */
+    }
+
+    .dropdown {
+        right: 20px; /* Adjust position for smaller screens */
+    }
+
+    .logout-home {
+        right: 20px; /* Adjust position for smaller screens */
+    }
+}
+#carousel {
+    width: 100%;
+    height: 800px; /* Adjust height as needed */
+    overflow: hidden;
+    position: relative;
+}
+
+.carousel-item {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.carousel-item.active {
+    opacity: 1;
+}
+
+.nav button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#prev {
+    left: 10px;
+}
+
+#next {
+    right: 10px;
+}
+
+.container-middle {
+    margin-top: 90px; /* Adjust this value to match the height of your header */
+}
+.image-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap; /* Allows the items to wrap onto multiple lines if needed */
+    gap: 50px; /* Adjust the gap between images */
+    padding: 190px; /* Add some padding around the container */
+}
+
+.image-container img {
+    flex: 1 0 auto; /* Allows the images to grow and shrink as needed */
+    max-width: 100%; /* Ensures the images do not exceed the container width */
+    height: auto; /* Maintains the aspect ratio of the images */
+}
+#image{
+    border-radius: 10px;
+    height: 180px;
+    width: 100px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
