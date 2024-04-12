@@ -10,17 +10,21 @@
 </head>
 <body>
         <div id="header">
+            <div class="outer-container">
             <div class="container">
                 
                 <a class="logo" href="index.html">crowwd</a>
                 <div class="box">
-                    <input type="text" placeholder="Search...">
-                    <a href="#">
-                    <i class="fa-solid fa-magnifying-glass" style="color: #c3073f;"></i></a>
+                    <form action="/search-events" method="POST">
+                    <input type="text"id="searchInput" name="searchQuery" placeholder="Search...">
+                    <button type="submit" style="border: none; background: none;">
+                        <i class="fa-solid fa-magnifying-glass" style="font-size: 20px; color: #c3073f;"></i>
+                    </button>
+                </form>
                 </div>
             </div>
             <div id="datepicker">
-                <form >
+                <form action="/process-dates" method="POST">
                     <label for="from-date">From  </label>
                     <input type="date" id="from-date" name="from-date">
                     <label for="to-date">To</label>
@@ -28,6 +32,7 @@
                     <button type="submit" id="go">Go</button>
                 </form>
             </div>
+        </div>
             <div class="dropdown">
                 <h3 id="dropdown-text">Select a city</h3>
                 <select name="cities" id="cities">
@@ -57,6 +62,19 @@
         <img id="image" src="image4.png" alt="Image 4">
         <img id="image" src="image5.png" alt="Image 5">
     </div>
+    <script>
+        $(document).ready(function() {
+    $('.box').click(function() {
+        // Get the current width of the search input field
+        var currentWidth = $('#searchInput').width();
+        
+        // Set the width of the search input field to its current width
+        // This stops the animation by overriding the CSS transition
+        $('#searchInput').css('width', currentWidth + 'px');
+    });
+});
+
+    </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
