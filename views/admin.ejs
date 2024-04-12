@@ -28,29 +28,68 @@
          <div class="admin-form-2" style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;font-weight: 400;color: #6f2232;">
             <h3>Name of the event</h3>
             <input type="text" name="textbox4" placeholder="Enter the name for the event" id="admin-textbox">
+            <h3>Category of the event</h3>
            <select name="dropdown1">
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
+            <option value="Free">Free</option>
+            <option value="Comedy">Comedy</option>
+            <option value="Workshops">Workshops</option>
+            <option value="Courses">Courses</option>
+            <option value="Theatre&Art">Theatre & Art</option>
+
              </select>
             <br>
             <h3>Description of the event</h3>
-           <input type="text" name="textbox5" placeholder="Text Box 2" id="admin-textbox">
-           <select name="dropdown2">
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            </select>
+           <input type="text" name="textbox5" placeholder="say anything about the event...." id="admin-textbox">
+           <h3>Location of the event</h3>
+           <select id="citySelect">
+            <option value="Alappuzha">Alappuzha</option>
+            <option value="Thrissur">Thrissur</option>
+            <option value="Palakkad">Palakkad</option>
+            <option value="Malappuram">Malappuram</option>
+            <option value="Manjeri">Manjeri</option>
+            <option value="Thalassery">Thalassery</option>
+            <option value="Kannur">Kannur</option>
+            <option value="Kasaragod">Kasaragod</option>
+            <option value="Kollam">Kollam</option>
+            <option value="Neyyattinkara">Neyyattinkara</option>
+            <option value="Kottayam">Kottayam</option>
+            <option value="Pala">Pala</option>
+            <option value="Aluva">Aluva</option>
+            <option value="Angamaly">Angamaly</option>
+            <option value="Thodupuzha">Thodupuzha</option>
+            <option value="Muvattupuzha">Muvattupuzha</option>
+            <option value="Perumbavoor">Perumbavoor</option>
+            <option value="Kothamangalam">Kothamangalam</option>
+            <option value="Vaikom">Vaikom</option>
+            <option value="Cherthala">Cherthala</option>
+            <option value="Changanassery">Changanassery</option>
+            <option value="Kozhencherry">Kozhencherry</option>
+            <option value="Adoor">Adoor</option>
+            <option value="Pathanamthitta">Pathanamthitta</option>
+            <option value="Pandalam">Pandalam</option>
+            <option value="Kayamkulam">Kayamkulam</option>
+            <option value="Mavelikkara">Mavelikkara</option>
+            <option value="Chengannur">Chengannur</option>
+            <option value="Thiruvalla">Thiruvalla</option>
+            <option value="Punalur">Punalur</option>
+            <option value="Paravur">Paravur</option>
+            <option value="Kochi">Kochi</option>
+            <option value="Kozhikode">Kozhikode</option>
+            <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+            <option value="Kollam">Kollam</option>
+        </select>
            <h3>Date of the event</h3>
            <input type="date" name="datePicker">
            
             <br>
             <h3>Event venue</h3>
-           <input type="text" name="textbox6" placeholder="Text Box 2" id="admin-textbox"><br>
+           <input type="text" name="textbox6" placeholder="location" id="admin-textbox"><br>
            <h3>Nearest bus point</h3>
-           <input type="text" name="textbox7" placeholder="Text Box 2"><br>
+           <input type="text" name="textbox7" placeholder="eg:- angamaly"><br>
            <h3>Nearest railway station</h3>
-           <input type="text" name="textbox8" placeholder="Text Box 2"><br>
+           <input type="text" name="textbox8" placeholder="eg:- aluva railway station"><br>
            <h3>Nearest airport</h3>
-           <input type="text" name="textbox9" placeholder="Text Box 2"><br>
+           <input type="text" name="textbox9" placeholder="eg:- CIAL"><br>
            <!-- Add more text boxes as needed -->
            <h3>Upload images of the event</h3>
            <input type="file" name="imageUploader">
@@ -61,7 +100,38 @@
            
        </form>
     </div>
+    <% if (typeof message !== 'undefined') { %>
+      <h3><%= message %></h3>
+     <% } %>
+     
+     
+     
     
     <img id="admin-image" src="multicultural-people-crowd-diverse-person-group-vector-34881635.png" width="900">
+    <script>
+       document.getElementById('eventForm').addEventListener('submit', function(event) {
+          // Check if all required fields are filled
+          var isValid = true;
+          var inputs = this.getElementsByTagName('input');
+          for (var i = 0; i < inputs.length; i++) {
+              if (inputs[i].type === 'text' && inputs[i].value === '') {
+                 isValid = false;
+                 break;
+              }
+          }
+          if (!isValid) {
+              event.preventDefault();
+              alert('Please fill in all required fields.');
+          }
+      });
+      document.getElementById('eventForm').addEventListener('submit', function(event) {
+          event.preventDefault(); 
+          event.target.reset();
+          
+      });
+  </script>
 </body>
 </html>
+    
+
+

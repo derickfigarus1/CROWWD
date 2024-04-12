@@ -118,7 +118,6 @@ app.post("/login", async (req, res) => {
         // Redirect to admin.html
         res.render('admin',{name:check.name});
         req.session.email = check.email;
-        //res.sendFile(path.join(__dirname, '../views/admin.ejs'));
       } else {
         req.session.email = check.email;
         res.render('home',{name:check.name});
@@ -176,14 +175,54 @@ app.post('/submit', upload.single('imageUploader'), async (req, res) => {
       imagePath: `/uploads/${req.file.filename}`
     });
     await image.save();
-    res.send('Image uploaded successfully');
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
   }
 });
-app.get('/', (req, res) => {
-  res.render('admin');
+app.get('/admin', (req, res) => {
+    // Assuming you want to display a success message
+    res.render('admin', { message: 'Event Registered' });
+   });
+   
+
+
+
+app.post('/process-dates', async (req, res) => {
+    const fromDate = new Date(req.body['from-date']);
+const toDate = new Date(req.body['to-date']);
+
+    
+    // Query the database for events within the date range
+    const events = await Image.find({
+        datePicker: {
+            $gte: fromDate,
+            $lte: toDate
+        }
+    });
+    
+    // Render a new EJS page with the retrieved events
+    res.render('events', { events: events });
+});
+app.post('/search-events', async (req, res) => {
+    const searchQuery = req.body.searchQuery;
+
+    // Perform a search in the database. This example assumes you want to search in multiple fields.
+    // Adjust the query according to your database schema and requirements.
+    const events = await Image.find({
+        $or: [
+            { textbox1: { $regex: searchQuery, $options: 'i' } },
+            { textbox4: { $regex: searchQuery, $options: 'i' } },
+            { textbox5: { $regex: searchQuery, $options: 'i' } },
+            { textbox6: { $regex: searchQuery, $options: 'i' } },
+            { textbox7: { $regex: searchQuery, $options: 'i' } },
+            { textbox8: { $regex: searchQuery, $options: 'i' } },
+            // Add more fields as needed
+        ]
+    });
+
+    // Render the events page with the search results
+    res.render('events', { events: events });
 });
 
 
