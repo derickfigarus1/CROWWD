@@ -100,10 +100,15 @@
            
        </form>
     </div>
-    <% if (typeof message !== 'undefined') { %>
-      <h3><%= message %></h3>
-     <% } %>
-     
+  
+    <% if (locals.messages && Array.isArray(locals.messages)) { %>
+        <% locals.messages.forEach(function(message) { %>
+            <div class="alert alert-success" role="alert">
+                <%= message %>
+            </div>
+        <% }); %>
+    <% } %>
+    
      
      
     

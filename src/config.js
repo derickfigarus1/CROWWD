@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Check database connected or not
 
 
 // Create Schema

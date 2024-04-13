@@ -113,9 +113,9 @@
     
     <div class="card-container" id="event-card1">
         <div class="event-card">
-            <img src="image1.png" alt="Event 1">
+            <img src="<%= event.imagePath %>" alt="Event 1" id="card-image">
             <h3 class="text"><%= event.textbox4 %></h3>
-            <p class="text">Date: <%= event.datePicker %></p>
+            <p class="text">Date:  <%= new Date(event.datePicker).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric' }) %></p>
             <p class="text">Place: <%= event.textbox6 %></p><br>
             <h4>Book Now</h4>
         </div>
