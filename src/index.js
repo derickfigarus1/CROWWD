@@ -4,60 +4,51 @@ const path = require("path");
 const collection = require("./config");
 const bcrypt = require('bcrypt');
 const multer = require('multer');
-//const { MongoClient } = require('mongodb');
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 const app = express();
 const dotenv = require("dotenv");
-
-
+const cookieParser = require('cookie-parser');
+const flash = require('connect-flash');
+//point to connection steing
 require('dotenv').config({ path: './src/.env' });
-
-
+//multer library used for image storing middleware
 const upload = multer({ 
-    dest: 'uploads/', // Specify the destination folder for uploaded images
-    storage: multer.diskStorage({ // Define multer storage
+    storage: multer.diskStorage({
         destination: function (req, file, cb) {
-            cb(null, 'uploads/'); // Destination folder
+            cb(null, path.join(__dirname, '../public/uploads/')); // Destination folder
         },
         filename: function (req, file, cb) {
-            cb(null, file.originalname); // Use the original file name
+            cb(null, file.originalname); 
         }
     })
 });
-
-//connection to mongodb mongoose.connect("mongodb+srv://arunmanoj005:ioc8Yl567WUcMv02@cluster1.zm5fy5d.mongodb.net/", { useNewUrlParser: true, useUnifiedTopology: true })
+//connection string
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
  .then(() => console.log("mongoDB is connected"))
   .then(() => console.log("Database Connected Successfully"))
   .catch(err => console.error("Database Connection Error: ", err));
-
 //session used for collecting email of loggedin user
+app.use(cookieParser('secret'));
 app.use(session({
-    secret: 'mykey123',
-    resave: false,
-    saveUninitialized: true
-  }));
-
+  cookie: { maxAge: 60000 },
+  secret: process.env.SESSION_SECRET || 'crowwd123',
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(flash());
 // convert data into json format
 app.use(express.json());
-//1 line today
-//app.use(cors());
-
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 app.get("/", (req, res) => {
   res.render("login");
 });
-
 app.get("/register", (req, res) => {
   res.render("register");
 });
-
-// Register User
 app.post("/register", async (req, res) => {
-
   console.log(req.body);
   const data = {
     name: req.body.name,
@@ -66,29 +57,24 @@ app.post("/register", async (req, res) => {
     c_password: req.body.c_password,
     user_type:req.body.user_type
   }
-
   // Check if the username already exists in the database
   if (data.password !== data.c_password) {
     return res.send('Password and confirm password do not match.');
   }
   const existingUser = await collection.findOne({ email: data.email });
-
   if (existingUser) {
     res.send('User already exists. Please choose a different email.');
   } 
-   
   try {
     // Hash the password using bcrypt
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(data.password, saltRounds);
-
     const newUser = new collection({
       name: data.name,
       email: data.email,
       password: hashedPassword,
       user_type:data.user_type
     });
-
     // Save the user to the database
     await newUser.save();
     console.log("User registered successfully.");
@@ -97,10 +83,7 @@ res.render("register", { message: 'User registered successfully.' });
     console.error(error);
     res.status(500).send('An error occurred while registering user.');
   }
-   
-
 });
-
 // Login user 
 app.post("/login", async (req, res) => {
   try {
@@ -113,28 +96,22 @@ app.post("/login", async (req, res) => {
     if (!isPasswordMatch) {
       res.send("wrong Password");
     }
-    else {
-      if (check.user_type === 'admin') {
-        // Redirect to admin.html
-        res.render('admin',{name:check.name});
-        req.session.email = check.email;
-      } else {
-        req.session.email = check.email;
-        res.render('home',{name:check.name});
-        req.session.email = check.email;    }
-  }
+   else {
+    req.session.email = check.email;
+    req.session.name = check.name; // Set the user's name in the session
+    if (check.user_type === 'admin') {
+      // Redirect to admin.html
+      res.render('admin', { name: check.name });
+    } else {
+      res.render('home', { name: check.name });
+    }
+  }
+} catch {
+  res.send("wrong Details");
 }
-  catch {
-    res.send("wrong Details");
-  }
 });
-
-
 //Admin page
 // Define a schema for the images collection
-
-
-
 const imageSchema = new mongoose.Schema({
   email:String,
   textbox1: String,
@@ -151,15 +128,16 @@ const imageSchema = new mongoose.Schema({
   dropdown2: String,
   imagePath: String
 });
-
 // Create a model from the schema
 const Image = mongoose.model('Image', imageSchema); 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.post('/submit', upload.single('imageUploader'), async (req, res) => {
   try {
     const userEmail = req.session.email;
     const date = new Date(req.body.datePicker);
-    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const formattedDate = `${year}-${month}-${day}`;
     const image = new Image({ 
       email: userEmail,
       textbox1: req.body.textbox1,
@@ -177,38 +155,34 @@ app.post('/submit', upload.single('imageUploader'), async (req, res) => {
       imagePath: `/uploads/${req.file.filename}`
     });
     await image.save();
+    req.flash('message', 'Event registered successfully.');
+    res.redirect('/admin'); // Redirect to the admin page
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
   }
 });
 app.get('/admin', (req, res) => {
-    // Assuming you want to display a success message
-    res.render('admin', { message: 'Event Registered' });
-   });
-   
-   app.post('/search-events-by-date-and-location', async (req, res) => {
+    const name = req.session.name || 'Guest';
+    res.locals.messages = req.flash();
+    res.render('admin', { name: name });
+  });
+app.post('/search-events-by-date-and-location', async (req, res) => {
     const { fromDate, toDate, location } = req.body;
-
     // Convert the dates to Date objects for comparison
     const from = new Date(fromDate);
     const to = new Date(toDate);
-
     // Perform a search in the database
     const events = await Image.find({
         datePicker: { $gte: from, $lte: to },
         dropdown2: location
     });
-
     // Render the events page with the search results
     res.render('events', { events: events });
 });
 
 app.post('/search-events', async (req, res) => {
     const searchQuery = req.body.searchQuery;
-
-    // Perform a search in the database. This example assumes you want to search in multiple fields.
-    // Adjust the query according to your database schema and requirements.
     const events = await Image.find({
         $or: [
             { textbox1: { $regex: searchQuery, $options: 'i' } },
@@ -217,11 +191,8 @@ app.post('/search-events', async (req, res) => {
             { textbox6: { $regex: searchQuery, $options: 'i' } },
             { textbox7: { $regex: searchQuery, $options: 'i' } },
             { textbox8: { $regex: searchQuery, $options: 'i' } },
-            // Add more fields as needed
         ]
     });
-
-    // Render the events page with the search results
     res.render('events', { events: events });
 });
 app.get('/event-details', function(req, res) { res.render('event-details'); });
