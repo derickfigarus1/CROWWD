@@ -40,7 +40,14 @@
                  </select>
             </div>
             <button type="submit"class="submit-btn">signup</button>
-            <p>already have an account? <a class="link" href="/login">login</a></p>
+            <% if (message) { %>
+                <div class="alert alert-success" style="    padding-left: 90px;
+                font-size: 20px;
+                color: red;">
+                    <%= message %>
+                </div>
+            <% } %>
+            <p>already have an account? <a class="link" href="/">login</a></p>
 
         </form>
     </div>
