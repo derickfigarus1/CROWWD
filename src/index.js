@@ -92,7 +92,7 @@ app.post("/register", async (req, res) => {
     // Save the user to the database
     await newUser.save();
     console.log("User registered successfully.");
-    res.send('User registered successfully.');
+res.render("register", { message: 'User registered successfully.' });
   } catch (error) {
     console.error(error);
     res.status(500).send('An error occurred while registering user.');
@@ -158,6 +158,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.post('/submit', upload.single('imageUploader'), async (req, res) => {
   try {
     const userEmail = req.session.email;
+    const date = new Date(req.body.datePicker);
+    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
     const image = new Image({ 
       email: userEmail,
       textbox1: req.body.textbox1,
@@ -169,7 +171,7 @@ app.post('/submit', upload.single('imageUploader'), async (req, res) => {
       textbox7: req.body.textbox7,
       textbox8: req.body.textbox8,
       textbox9: req.body.textbox9,
-      datePicker: new Date(req.body.datePicker),
+      datePicker: formattedDate,
       dropdown1: req.body.dropdown1,
       dropdown2: req.body.dropdown2,
       imagePath: `/uploads/${req.file.filename}`
@@ -185,25 +187,23 @@ app.get('/admin', (req, res) => {
     res.render('admin', { message: 'Event Registered' });
    });
    
+   app.post('/search-events-by-date-and-location', async (req, res) => {
+    const { fromDate, toDate, location } = req.body;
 
+    // Convert the dates to Date objects for comparison
+    const from = new Date(fromDate);
+    const to = new Date(toDate);
 
-
-app.post('/process-dates', async (req, res) => {
-    const fromDate = new Date(req.body['from-date']);
-const toDate = new Date(req.body['to-date']);
-
-    
-    // Query the database for events within the date range
+    // Perform a search in the database
     const events = await Image.find({
-        datePicker: {
-            $gte: fromDate,
-            $lte: toDate
-        }
+        datePicker: { $gte: from, $lte: to },
+        dropdown2: location
     });
-    
-    // Render a new EJS page with the retrieved events
+
+    // Render the events page with the search results
     res.render('events', { events: events });
 });
+
 app.post('/search-events', async (req, res) => {
     const searchQuery = req.body.searchQuery;
 
@@ -224,6 +224,7 @@ app.post('/search-events', async (req, res) => {
     // Render the events page with the search results
     res.render('events', { events: events });
 });
+app.get('/event-details', function(req, res) { res.render('event-details'); });
 
 
 // Define Port for Application
