@@ -1,115 +1,116 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap');
-body {
+
+/* Global styles */
+.body-events{
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
     flex-wrap: wrap;
     display: flex;
-   
 }
+.body-home{
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  flex-wrap: wrap;
+}
+
 @media (max-width: 768px) {
     .logo {
         font-size: 4vw; /* Adjust font size for smaller screens */
     }
-
     .box {
         margin-top: 10px; /* Adjust margins for smaller screens */
     }
-
-    .dropdown {
-        right: 20px; /* Adjust position for smaller screens */
-    }
-
-    .logout-home {
+    .dropdown, .logout-home {
         right: 20px; /* Adjust position for smaller screens */
     }
 }
 
-
-/* Adjust header height as needed */
 header {
     height: 80px;
     background-color: #333;
-  }
-  .d-none.d-lg-flex.me-5.ms-lg-auto.ms-lg-5.justify-content-lg-end {
-color: #f0e5c7;  
-font-family: 'Poppins', sans-serif;
-
 }
 
+.d-none.d-lg-flex.me-5.ms-lg-auto.ms-lg-5.justify-content-lg-end {
+    color: #f0e5c7;
+    font-family: 'Poppins', sans-serif;
+}
 
-  
-  @media (max-width: 768px) {
+@media (max-width: 768px) {
     .d-lg-none {
-      display: block;
+        display: block;
     }
-    .d-lg-flex, .nav-item.dropdown.d-lg-none > .btn  {
-      display: none;
+    .d-lg-flex, .nav-item.dropdown.d-lg-none > .btn {
+        display: none;
     }
-  }
-  body {
-    font-family: 'Lato', sans-serif;
-  }
-  
-  .overlay {
+}
+
+.overlay {
     height: 0%;
     width: 100%;
     position: fixed;
     z-index: 1;
     top: 0;
     right: 0;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0, 0.9);
+    background-color: rgba(0, 0, 0, 0.9);
     overflow-y: hidden;
     transition: 0.5s;
-  }
-  
-  .overlay-content {
+}
+
+.overlay-content {
     position: relative;
     top: 25%;
     width: 100%;
     text-align: center;
     margin-top: 30px;
-  }
-  
-  .overlay a {
+}
+
+.overlay a {
     padding: 8px;
     text-decoration: none;
     font-size: 36px;
     color: #818181;
     display: block;
     transition: 0.3s;
-  }
-  
-  .overlay a:hover, .overlay a:focus {
+}
+
+.overlay a:hover, .overlay a:focus {
     color: #f1f1f1;
-  }
-  
-  .overlay .closebtn {
+}
+
+.overlay .closebtn {
     position: absolute;
     top: 20px;
     right: 45px;
     font-size: 60px;
-  }
-  
-  @media screen and (max-height: 450px) {
-    .overlay {overflow-y: auto;}
-    .overlay a {font-size: 20px}
-    .overlay .closebtn {
-    font-size: 40px;
-    top: 15px;
-    right: 35px;
-    }
-  }
+}
 
-.container-fluid h1{
+@media screen and (max-height: 450px) {
+    .overlay {
+        overflow-y: auto;
+    }
+    .overlay a {
+        font-size: 20px;
+    }
+    .overlay .closebtn {
+        font-size: 40px;
+        top: 15px;
+        right: 35px;
+    }
+}
+
+.container-fluid h1 {
     color: #c3073f;
     font-family: 'Poppins', sans-serif;
 }
+
 #searchInput {
     border-radius: 20px; /* Rounded corners */
     width: 300px;
-   }
+}
+
 .btn-outline-success {
     background-color: #f0e5c7; /* Custom background color */
     border-color: #f0e5c7;
@@ -117,32 +118,57 @@ font-family: 'Poppins', sans-serif;
     transition: background-color 0.3s ease; /* Smooth transition for hover effect */
     font-weight: bold;
     border-radius: 30px;
-   }
-   
+}
+
 .btn-outline-success:hover {
     background-color: #c3073f; /* Darker background color on hover */
     border-color: #c3073f;
-   }
-
-.card-container {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    padding: 20px;
 }
 
+
+.list-container{
+  padding-left: 100px;
+  padding-right: 100px;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+.card-container{
+padding-top: 20px;}
 .event-card {
-    background-color: #c7c8c9;
+    background-color: whitesmoke;
     border-radius: 10px;
-    width: 350px;
+    width: 450px;
     margin: 10px;
     padding: 0px;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     transition: 0.3s;
+    font-family: 'Poppins', sans-serif;
+
+}
+#link-card{
+  text-decoration: none;
+}
+/* styles.css */
+
+/* Define a container for icon and text to display them inline */
+.icon-text-container {
+  display: flex; /* Use flexbox to place items in a row */
+  align-items: center; /* Align items vertically */
+  color: #333;
+}
+#book-now{
+  color: black;
 }
 
+/* Style the icon */
+.icon-text-container i {
+  margin-right: 5px; /* Add some spacing between the icon and text */
+}
+
+
 .event-card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
 
 .event-card img {
@@ -150,35 +176,27 @@ font-family: 'Poppins', sans-serif;
     height: auto;
 }
 
-.event-card h3 {
-    margin: 10px 0;
+.event-card h3, .event-card p, .event-card h4 {
+    margin: 5px 0;
     padding-left: 7px;
+}
+
+.event-card h3 {
     color: #c3073f;
 }
 
-.event-card p {
-    margin: 5px 0;
-    padding-left: 7px;
-    color: black;
-}
-.event-card h4 {
-    margin: 5px 0;
-    padding-left: 7px;
-    color: black;
-    font-weight: bold;
-}
-
-.your-events{
+.your-events {
     width: 100%;
     color: #c3073f;
     padding-top: 20px;
     margin-left: 20px;
     font-weight: 900;
-
 }
-#event-card{
+
+#event-card {
     text-decoration: none;
 }
+
 .image-container {
     display: flex;
     justify-content: space-between;
@@ -192,8 +210,153 @@ font-family: 'Poppins', sans-serif;
     max-width: 100%; /* Ensures the images do not exceed the container width */
     height: auto; /* Maintains the aspect ratio of the images */
 }
-#image{
+
+#image {
     border-radius: 10px;
     height: 180px;
     width: 100px;
+}
+
+.col-12.col-md-8 {
+    padding-left: 200px;
+}
+
+.col-12.col-md-4 {
+    padding-right: 80px; /* Increase the padding on the right side to move the content to the left */
+    margin-left: -50px; /* Move the entire column to the left by 50px */
+}
+
+img {
+    width: 100%; /* Make the image responsive */
+    height: auto; /* Maintain the aspect ratio */
+    max-width: 100%; /* Ensure the image does not exceed its parent's width */
+}
+
+.column-image {
+    width: 80%;
+    height: auto;
+}
+
+.d-flex.align-items-left {
+    width: 30%; /* Adjust this value as needed */
+}
+
+/* Add space between image and details area */
+.col-md-6:first-child {
+    padding: 20px; /* Adjust as needed */
+    flex: 0 0 40%;
+    max-width: 40%;
+}
+
+.row {
+    width: 100%; /* Full width */
+    max-width: 2000px; /* Maximum width */
+    margin: 0 auto; /* Center the row */
+    margin-top: 20px; /* Adjust as needed */
+}
+
+/* Adjust the width for larger screens */
+@media (min-width: 992px) {
+    .row {
+        width: 90%; /* Adjust as needed */
+    }
+}
+
+/* Custom CSS for separators */
+/* Remove border from the last icon */
+.travel i:last-child {
+    border-right: none;
+    padding-right: 0;
+}
+
+.travel {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background-color: #f2e8fc; /* Assuming you want a background color for the travel container */
+    border-radius: 10px;
+    padding: 0 20px;
+    min-height: 100px;
+}
+
+.d-flex.align-items
+
+-left {
+    padding-top: 20px;
+}
+
+.icon-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column; /* Stack icon and <p> tag vertically */
+    justify-content: center;
+    align-items: center;
+    padding: 10px 10px; /* Add padding to the left and right of each icon container */
+    border-right: 1px solid #d0aef2;
+}
+
+#decrementButton,
+#incrementButton {
+    background-color: #333;
+    border-color: #333;
+}
+
+.btn.btn-success.mt-3 {
+    background-color: #c3073f;
+    border-color: #c3073f;
+}
+
+.btn.btn-success.mt-3:hover {
+    background-color: red;
+}
+
+.icon-container * {
+    margin: 0;
+    padding: 0;
+}
+
+.icon-container:last-child {
+    border-right: none; /* Remove the separator line from the last icon container */
+}
+
+.col-md-6:last-child .form-control {
+    width: 50px; /* Adjust as needed */
+}
+
+.col-md-6:first-child img {
+    width: 100%;
+    height: auto;
+}
+
+.container-fluid h1 {
+    color: #c3073f;
+    font-family: 'Poppins', sans-serif;
+}
+
+#searchInput {
+    border-radius: 20px; /* Rounded corners */
+    width: 300px;
+}
+
+.btn-outline-success {
+    background-color: #f0e5c7; /* Custom background color */
+    border-color: #f0e5c7;
+    color: black; /* Text color */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+    font-weight: bold;
+    border-radius: 30px;
+}
+
+.btn-outline-success:hover {
+    background-color: #c3073f; /* Darker background color on hover */
+    border-color: #c3073f;
+}
+
+.col-md-6 {
+    padding: 0;
+}
+
+.col-md-6:last-child {
+    flex: 0 0 60%;
+    max-width: 60%;
 }
