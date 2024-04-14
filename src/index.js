@@ -159,6 +159,10 @@ app.post('/submit', upload.single('imageUploader'), async (req, res) => {
      const month = (date.getMonth() + 1).toString().padStart(2, '0');
      const year = date.getFullYear();
      const formattedDate = `${year}-${month}-${day}`;
+     let totalTickets = parseInt(req.body.totalTickets, 10);
+    if (isNaN(totalTickets)) {
+      totalTickets = 0; // Defau
+    }
      const image = new Image({
        email: userEmail,
        textbox1: req.body.textbox1,
@@ -174,13 +178,13 @@ app.post('/submit', upload.single('imageUploader'), async (req, res) => {
        dropdown1: req.body.dropdown1,
        dropdown2: req.body.dropdown2,
        imagePath: imagePath,
-       totalTickets: req.body.totalTickets // Assuming you have a new input field for total tickets
+       totalTickets: totalTickets // Assuming you have a new input field for total tickets
      });
  
      await image.save();
  
      // Create a new ticket document for the event
-const newTicket = new Ticket({
+      const newTicket = new Ticket({
        eventId: image._id,
        totalTickets: req.body.totalTickets
      });
@@ -193,6 +197,19 @@ const newTicket = new Ticket({
      res.status(500).send('Server error');
   }
  });
+ const ticketSchema = new mongoose.Schema({
+  eventId: {
+     type: mongoose.Schema.Types.ObjectId,
+     ref: 'Image',
+     required: true
+  },
+  totalTickets: {
+     type: Number,
+     required: true
+  }
+ });
+ 
+ const Ticket = mongoose.model('Ticket', ticketSchema);
  
 
  
@@ -227,84 +244,66 @@ app.post('/search-events', async (req, res) => {
     });
     res.render('events', { events: events });
 });
+
 app.get('/event/:id', async (req, res) => {
   try {
+     // Extract the event ID from the request parameters
      const eventId = req.params.id;
+ 
+     // Find the event in the database using the provided ID
      const event = await Image.findById(eventId);
-     const ticket = await Ticket.findOne({ eventId: eventId });
-     if (!event || !ticket) {
-       return res.status(404).send('Event or ticket information not found');
+ 
+     // If the event is not found, send a 404 response
+     if (!event) {
+       return res.status(404).send('Event not found');
      }
-     // Pass both the event and the total tickets to the view
-     res.render('event-details', { event: event, totalTickets: ticket.totalTickets });
-  } catch (error) {
+ 
+     // Render the event details view, passing the event data
+     res.render('event-details', { event: event });
+  } catch (error) { 
      console.error(error);
      res.status(500).send('Server error');
   }
  });
- 
- const ticketSchema = new mongoose.Schema({
-  eventId: {
-     type: mongoose.Schema.Types.ObjectId,
-     ref: 'Image',
-     required: true
-  },
-  totalTickets: {
-     type: Number,
-     required: true
-  }
- });
- 
- const Ticket = mongoose.model('Ticket', ticketSchema);
  app.post('/book-event/:id', async (req, res) => {
   try {
-     const eventId = req.params.id;
-     let quantity = parseInt(req.body.quantity, 10); // Ensure quantity is a number
+      const eventId = req.params.id;
+      const quantity = parseInt(req.body.quantity, 10); // Ensure to parse the quantity as an integer
  
-     // Check if quantity is a valid number
-     if (isNaN(quantity)) {
-       return res.status(400).send('Invalid quantity');
-     }
+      // Check if quantity is a valid number
+      if (isNaN(quantity) || quantity <= 0) {
+        return res.status(400).send('Invalid quantity.');
+      }
  
-     // Find the ticket document for the event
-     const ticket = await Ticket.findOne({ eventId: eventId });
-     if (!ticket) {
-       return res.status(404).send('Ticket information not found');
-     }
+      // Find the event by its ID
+      const event = await Image.findById(eventId);
+      if (!event) {
+        return res.status(404).send('Event not found');
+      }
  
-     // Subtract the quantity from the total tickets
-     ticket.totalTickets -= quantity;
-     await ticket.save();
+      // Subtract the quantity from the totalTickets
+      const updatedTotalTickets = event.totalTickets - quantity;
  
-     // Redirect or send a response as needed
-     res.redirect('/event/' + eventId);
+      // Update the event with the new totalTickets value
+      await Image.updateOne({ _id: eventId }, { totalTickets: updatedTotalTickets });
+ 
+      // Redirect or send a response indicating success
+      res.redirect('/success'); // Assuming you have a success page
   } catch (error) {
-     console.error(error);
-     res.status(500).send('Server error');
+      console.error(error);
+      res.status(500).send('An error occurred while booking the event.');
   }
  });
  
  
  
  
- app.get('/event/:id', async (req, res) => {
-  try {
-     const eventId = req.params.id;
-     const event = await Image.findById(eventId);
-     const ticket = await Ticket.findOne({ eventId: eventId });
-     if (!event || !ticket) {
-       return res.status(404).send('Event or ticket information not found');
-     }
-     // Pass both the event and the total tickets to the view
-     res.render('event-details', { event: event, totalTickets: ticket.totalTickets });
-  } catch (error) {
-     console.error(error);
-     res.status(500).send('Server error');
-  }
- });
-
-
  
+  
+ 
+ 
+ 
+
  
 // Define Port for Application
 const port = process.env.PORT || 5000;

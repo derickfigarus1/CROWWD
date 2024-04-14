@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-
-
-
 // Create Schema
 const Loginschema = new mongoose.Schema({
     name: {

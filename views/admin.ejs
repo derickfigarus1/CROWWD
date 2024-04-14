@@ -83,7 +83,8 @@
            
             <br>
             <h3>Total Tickets Available</h3>
-            <input type="number" name="totalTickets" placeholder="Enter total tickets available" id="admin-textbox">
+            <input type="number" name="totalTickets" placeholder="Enter total tickets available" id="quantity" pattern="[0-9]+">
+
 
             <h3>Event venue</h3>
            <input type="text" name="textbox6" placeholder="location" id="admin-textbox"><br>
@@ -117,27 +118,37 @@
     
     <img id="admin-image" src="multicultural-people-crowd-diverse-person-group-vector-34881635.png" width="900">
     <script>
-       document.getElementById('eventForm').addEventListener('submit', function(event) {
-          // Check if all required fields are filled
-          var isValid = true;
-          var inputs = this.getElementsByTagName('input');
-          for (var i = 0; i < inputs.length; i++) {
-              if (inputs[i].type === 'text' && inputs[i].value === '') {
-                 isValid = false;
-                 break;
-              }
-          }
-          if (!isValid) {
-              event.preventDefault();
-              alert('Please fill in all required fields.');
-          }
-      });
-      document.getElementById('eventForm').addEventListener('submit', function(event) {
-          event.preventDefault(); 
-          event.target.reset();
-          
-      });
-  </script>
+        document.getElementById('eventForm').addEventListener('submit', function(event) {
+            // Prevent form submission
+            event.preventDefault();
+    
+            // Check if all required fields are filled
+            var isValid = true;
+            var inputs = this.getElementsByTagName('input');
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].type === 'text' && inputs[i].value === '') {
+                    isValid = false;
+                    break;
+                }
+            }
+    
+            // Check if totalTickets is a valid number
+            var totalTicketsValue = parseInt(document.getElementsByName('totalTickets')[0].value);
+            if (isNaN(totalTicketsValue)) {
+                isValid = false;
+                alert('Please enter a valid number for Total Tickets.');
+            }
+    
+            // Submit the form if all validations pass
+            if (isValid) {
+                this.submit();
+            } else {
+                // Display an error message if any validation fails
+                alert('Please fill in all required fields and ensure Total Tickets is a valid number.');
+            }
+        });
+    </script>
+    
 </body>
 </html>
     
