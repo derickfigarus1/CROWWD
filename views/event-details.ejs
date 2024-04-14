@@ -115,18 +115,15 @@
                   <p><%= event.textbox9 %></p>
               </div>
           </div>
-          <p>Total Available Seats: <%= totalTickets %></p>
-
+          
+ 
           
 <form id="bookEventForm" action="/book-event/<%= event._id %>" method="post">
                 <div class="d-flex align-items-left">
 
-                <button class="btn btn-primary me-2" id="decrementButton" type="button">-</button>
-                <input type="number" class="form-control text-center" value="1"  id="quantity">
-                <button class="btn btn-primary ms-2"id="incrementButton" type="button">+</button>
+                <input type="number" class="form-control text-center" value="1"  id="quantity" name="quantity">
             </div>
             <button class="btn btn-success mt-3" type="submit">Book Now</button>
-
               </form>
                
         </div>
@@ -138,29 +135,20 @@
 
 
 
-    <script>
-      document.getElementById('incrementButton').addEventListener('click', function() {
-        var inputBox = document.getElementById('quantity');
-        var currentValue = parseInt(inputBox.value, 10);
-        if (isNaN(currentValue)) {
-            currentValue = 0; // If the input box is empty or contains non-numeric characters, set the value to 0
-        }
-        inputBox.value = currentValue + 1; // Increment the value by 1
-      });
-      document.getElementById('decrementButton').addEventListener('click', function() {
-        var inputBox = document.getElementById('quantity');
-        var currentValue = parseInt(inputBox.value, 10);
-        if (isNaN(currentValue)) {
-            currentValue = 0; // If the input box is empty or contains non-numeric characters, set the value to 0
-        }
-        if (currentValue > 0) { // Ensure the value does not go below 0
-            inputBox.value = currentValue - 1; // Decrement the value by 1
-        }
-      });
-      
-      </script>
+   
 
-
+<script>
+  document.getElementById('bookEventForm').addEventListener('submit', function(event) {
+      var quantityInput = document.getElementById('quantity');
+      var quantityValue = parseInt(quantityInput.value, 10);
+  
+      if (isNaN(quantityValue) || quantityValue <= 0) {
+          alert('Please enter a valid quantity.');
+          event.preventDefault(); // Prevent form submission
+      }
+  });
+  </script>
+  
 
 
 
@@ -183,28 +171,6 @@
          document.getElementById("myNav").style.height = "0%";
        }
        </script>
-      <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var form = document.getElementById('bookEventForm');
-            if (form) {
-                form.addEventListener('submit', function(event) {
-                    var quantityInput = document.getElementById('quantity');
-                    var quantity = parseInt(quantityInput.value, 10);
-                    
-                    console.log('Quantity:', quantity); // Debugging log
-        
-                    // Check if quantity is a valid number and greater than 0
-                    if (isNaN(quantity) || quantity <= 0) {
-                        alert('Please enter a valid quantity.');
-                        event.preventDefault(); // Prevent the form from being submitted
-                    }
-                });
-            } else {
-                console.error('Form not found'); // Debugging log
-            }
-        });
-        </script>
-        
        
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jY38PBHQiwNzxEh7xdsJBj9zIxq7Czs" crossorigin="anonymous"></script>
       <script src="https://kit.fontawesome.com/your-fontawesome-kit-code.js" crossorigin="anonymous"></script>
