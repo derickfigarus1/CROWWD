@@ -12,7 +12,7 @@ body {
     height: 100vh;
     display: flex;
     justify-content: center;
-    background-color:#f0e5c7;
+    background-color:#080707;
     margin: 0;
     padding: 0;
 }
@@ -31,7 +31,7 @@ h2 {
     background-color: white;
     height: 400px;
     margin: auto;
-    margin-left: 28%;
+    margin-left: 23%;
   }
   .form-container-reg {
     width: 475px;
@@ -94,7 +94,7 @@ h2 {
     color: red;
   }
   #logo{
-    font-size: 45px;
+    font-size: 75px;
     padding-left: 10px;
     color: #c3073f;
     font-family: 'Poppins', sans-serif;
