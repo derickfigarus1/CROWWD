@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
 * {
     margin: 0;
@@ -7,69 +8,70 @@
     font-family: 'Poppins', sans-serif;
 
 }
-
-body {
+#error-message{
+  padding-top: 10px;
+}
+.body-register{
     height: 100vh;
+    background: #333;
     display: flex;
     justify-content: center;
-    background-color:#080707;
     margin: 0;
     padding: 0;
 }
+.body-login{
+  background-color: #c9d6ff;
+  background: linear-gradient(to right, #f6f5f2, #333);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100vh;
+}
 
-
-h2 {
+#register-now{
     text-align: center;
     margin-bottom: 30px;
   }
 
-.form-container {
-    width: 475px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: white;
-    height: 400px;
-    margin: auto;
-    margin-left: 23%;
-  }
+
   .form-container-reg {
     width: 475px;
     padding: 20px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 15px;
     background-color: white;
     height: 650px;
     margin: auto;
-    margin-left: 35%;
+    margin-left: 36%;
   }
 
 
-  .form-group {
+  .form-group-reg{
     margin-bottom: 15px;
   }
 
-  .form-group label {
+  .form-group-reg label {
     display: block;
     font-weight: bold;
     margin-bottom: 5px;
   }
 
-  .form-group input {
+  .form-group-reg input {
     width: 100%;
     padding: 8px;
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 3px;
   }
-  .form-group select{
+  .form-group-reg select{
     width: 100%;
     padding: 8px;
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 3px;
 }
-  .submit-btn {
+  .submit-btn-reg{
     display: block;
     width: 100%;
     padding: 10px;
@@ -82,24 +84,152 @@ h2 {
     
   }
 
-  .submit-btn:hover {
+  .submit-btn-reg:hover {
     background-color: #4565a0;
   }
 
-  p {
+  #backtologin{
     margin-top: 15px;
     padding-left: 110px;
   }
-  .link{
+  .link-reg{
     color: red;
   }
-  #logo{
-    font-size: 75px;
-    padding-left: 10px;
-    color: #c3073f;
-    font-family: 'Poppins', sans-serif;
-  }
+  *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
 
+.body-login{
+    background-color: #c9d6ff;
+    background: linear-gradient(to right, #f6f5f2, #333);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.container-login{
+    background-color: #fff;
+    border-radius: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+    position: relative;
+    overflow: hidden;
+    width: 1068px;
+    max-width: 100%;
+    min-height: 680px;
+
+}
+#no-account{
+    color: #c3073f;
+}
+
+.container-login form{
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+    height: 100%;
+    text-decoration: none;
+
+}
+
+.container-login input{
+    background-color: #eee;
+    border: none;
+    margin: 8px 0;
+    padding: 10px 15px;
+    font-size: 13px;
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
+}
+
+.container-login button{
+    background-color: #333;
+    color: #fff;
+    font-size: 12px;
+    padding: 10px 45px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.form-container-login{
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: all 5.6s ease-in-out;
+}
+
+.sign-in{
+    left: 0;
+    width: 50%;
+    z-index: 2;
+}
+
+
+
+.social-icons{
+    margin: 20px 0;
+}
+
+.social-icons a{
+    border: 1px solid #ccc;
+    border-radius: 20%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 3px;
+    width: 40px;
+    height: 40px;
+    text-decoration: none;
+    color: #333;
+
+}
+
+
+
+.toggle-container-login{
+    position: absolute;
+    top: 0;
+    left: 50%; /* This positions the toggle-container to the right half of the container */
+    width: 50%; /* This makes the toggle-container half the width of the container */
+    height: 100%;
+    overflow: hidden;
+    transition: all 0.6s ease-in-out;
+    border-radius: 150px 0 0 100px;
+    z-index: 1000;
+}
+#crowwd{
+    color: #c3073f;    
+    font-family: 'Poppins', sans-serif;
+    font-size: 90px;
+                
+}
+.toggle-login{
+    background-color: #333;
+    height: 100%;
+    color: #fff;
+    position: relative;
+    left: 0; /* Adjusted to make the toggle visible within the toggle-container */
+    height: 100%;
+    width: 200%;
+    transform: translateX(0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.6s ease-in-out;
+}
 
 
 

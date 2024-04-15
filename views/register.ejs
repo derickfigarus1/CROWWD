@@ -3,53 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=\, initial-scale=1.0">
-    <title>Document</title>
+    <title>Register</title>
     <link rel="stylesheet" href="/style.css">
 </head>
-<body>
+<body class="body-register">
     <div class="form-container-reg">
-        <h2>Register Now
-        </h2>
+        <h2 id="register-now">Register Now</h2>
         <form action="/register" method="post">
 
-            <div class="form-group">
+            <div class="form-group-reg">
                 <label for="name">name :</label>
                 <input type="text" id="name" name="name" placeholder="enter your name" required autocomplete="off">
 
             </div>
-            <div class="form-group">
+            <div class="form-group-reg">
                 <label for="email">email :</label>
                 <input type="text" id="email" name="email" placeholder="enter you email" required autocomplete="off">
 
             </div>
-            <div class="form-group">
+            <div class="form-group-reg">
                 <label for="password">password :</label>
                 <input type="password" name="password" id="password" placeholder="enter your password" required>
 
             </div>
-            <div class="form-group">
+            <div class="form-group-reg">
                 <label for="password">confirm password :</label>
                 <input type="password" name="c_password" id="c_password" placeholder="enter your password" required>
 
             </div>
-            <div class="form-group">
+            <div class="form-group-reg">
                 <label for="user_type">User Type :</label>
                 <select id="user_type" name="user_type">
                     <option value="user">user</option>
                     <option value="admin">admin</option>
                  </select>
             </div>
-            <button type="submit"class="submit-btn">signup</button>
+            <button type="submit"class="submit-btn-reg">signup</button>
             <% if (message) { %>
-                <div class="alert alert-success" style="    padding-left: 90px;
+                <div class="reg-alert-success" style="    
+                padding-top: 10px;
                 font-size: 20px;
-                color: red;">
+                color: red;
+                text-align: center;">
                     <%= message %>
                 </div>
             <% } %>
-            <p>already have an account? <a class="link" href="/">login</a></p>
+            <p id="backtologin">already have an account? <a class="link-reg" href="/">login</a></p>
 
         </form>
     </div>
+   
+    
 </body>
 </html>
