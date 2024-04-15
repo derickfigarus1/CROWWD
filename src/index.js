@@ -53,8 +53,10 @@ app.get("/", (req, res) => {
   res.render("login");
 });
 app.get("/register", (req, res) => {
-  res.render("register");
-});
+  // Pass an empty string as the default message
+  res.render("register", { message: "" });
+ });
+ 
 //register page
 app.post("/register", async (req, res) => {
   try {
@@ -65,17 +67,14 @@ app.post("/register", async (req, res) => {
        c_password: req.body.c_password,
        user_type: req.body.user_type
      };
- 
      // Check if the username already exists in the database
      if (data.password !== data.c_password) {
-       return res.status(400).send('Password and confirm password do not match.');
+       res.render("register", { message: 'Passwords do not match.' });
      }
- 
      const existingUser = await collection.findOne({ email: data.email });
      if (existingUser) {
-       return res.status(400).send('User already exists. Please choose a different email.');
+       res.render("register", { message: 'User already exists.' });
      }
- 
      // Hash the password using bcrypt
      const saltRounds = 10;
      const hashedPassword = await bcrypt.hash(data.password, saltRounds);
@@ -85,43 +84,89 @@ app.post("/register", async (req, res) => {
        password: hashedPassword,
        user_type: data.user_type
      });
- 
      // Save the user to the database
      await newUser.save();
      console.log("User registered successfully.");
      res.render("register", { message: 'User registered successfully.' });
   } catch (error) {
      console.error(error);
-     res.status(500).send('An error occurred while registering user.');
-  }
+     res.render("register", { message: 'An error occurred while registering user.' });
+    }
  });
- 
 // Login user 
 app.post("/login", async (req, res) => {
-  try {
-    const check = await collection.findOne({ email: req.body.email });
-    if (!check) {
-      res.send("User name cannot found")
-    }
-    // Compare the hashed password from the database with the plaintext password
-    const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
-    if (!isPasswordMatch) {
-      res.send("wrong Password");
-    }
-   else {
+ try {
+    const check = await collection.findOne({ email: req.body.email });
+    if (!check) {
+      return res.render('login', { errorMessage: "User name cannot found!" });
+    }
+    // Compare the hashed password from the database with the plaintext password
+    const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
+    if (!isPasswordMatch) {
+      return res.render('login', { errorMessage: "Wrong Password!" });
+    }
+    // Fetch ranked events before rendering the home view
+    const rankedEvents = await getRankedEvents();
     req.session.email = check.email;
     req.session.name = check.name; // Set the user's name in the session
     if (check.user_type === 'admin') {
       // Redirect to admin.html
       res.render('admin', { name: check.name });
     } else {
-      res.render('home', { name: check.name });
+      res.render('home', { name: check.name, rankedEvents: rankedEvents });
     }
-  }
-} catch {
-  res.send("wrong Details");
-}
+ } catch (error) {
+    console.error(error);
+    res.render('login', { errorMessage: "An error occurred during login." });
+ }
 });
+
+async function getRankedEvents() {
+ try {
+    const topEvents = await Image.aggregate([
+      {
+        $lookup: {
+          from: 'tickets', // Assuming 'tickets' is the collection name for Ticket model
+          localField: '_id',
+          foreignField: 'eventId',
+          as: 'ticketInfo'
+        }
+      },
+      {
+        $unwind: '$ticketInfo'
+      },
+      {
+        $project: {
+          textbox4: 1,
+          dropdown2: 1,
+          datePicker:1,
+          totalTickets: 1,
+          ticketInfo: 1,
+          percentage: {
+            $multiply: [
+              { $divide: ['$totalTickets', '$ticketInfo.totalTickets'] },
+              100
+            ]
+          }
+        }
+      },
+      {
+        $sort: {
+          percentage: -1
+        }
+      },
+      {
+        $limit: 6
+      }
+    ]);
+
+    return topEvents;
+ } catch (error) {
+    console.error(error);
+    throw error; // Rethrow the error to handle it in the calling function
+ }
+}
+
 //Admin page
 // Define a schema for the images collection
 const imageSchema = new mongoose.Schema({
@@ -294,15 +339,16 @@ app.get('/event/:id', async (req, res) => {
       res.status(500).send('An error occurred while booking the event.');
   }
  });
+
+// Assuming you have already defined your Image and Ticket models
+
+// Assuming you have already defined your Image and Ticket models
+
  
  
- 
- 
- 
-  
- 
- 
- 
+
+
+
 
  
 // Define Port for Application
