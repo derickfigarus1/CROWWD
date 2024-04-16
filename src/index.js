@@ -138,10 +138,9 @@ async function getRankedEvents() {
       {
         $project: {
           textbox4: 1,
+          imagePath:1,
           dropdown2: 1,
           datePicker:1,
-          totalTickets: 1,
-          ticketInfo: 1,
           percentage: {
             $multiply: [
               { $divide: ['$totalTickets', '$ticketInfo.totalTickets'] },
@@ -333,7 +332,6 @@ app.get('/event/:id', async (req, res) => {
       await Image.updateOne({ _id: eventId }, { totalTickets: updatedTotalTickets });
  
       // Redirect or send a response indicating success
-      res.redirect('/success'); // Assuming you have a success page
   } catch (error) {
       console.error(error);
       res.status(500).send('An error occurred while booking the event.');
@@ -343,7 +341,11 @@ app.get('/event/:id', async (req, res) => {
 // Assuming you have already defined your Image and Ticket models
 
 // Assuming you have already defined your Image and Ticket models
-
+app.get('/filter-events', async (req, res) => {
+ const dropdown1Value = req.query.dropdown1;
+ const events = await Image.find({ dropdown1: dropdown1Value });
+ res.render('events', { events: events });
+});
  
  
 

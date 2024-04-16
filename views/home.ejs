@@ -3,31 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Responsive Home Page</title>
+  <title>Home</title>
+  <link rel="icon" href="logo.png"
+          type="image/x-icon">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="/style3.css">
 </head>
 <body class="body-home">
-  <div id="loader" class="loader"></div>
- <header class="container-fluid d-flex justify-content-between align-items-center py-3">
-    <div class="d-flex align-items-center me-auto w-75">
+ <header class="container-fluid d-flex justify-content-start align-items-center py-4">
+    <div class="d-flex align-items-center me-auto ">
         <a href="#" class="text-decoration-none d-flex align-items-center">
           <h1 class="me-5">crowwd</h1>
         </a>
         <form class="d-flex me-3" action="/search-events" method="POST" >
           <input class="form-control me-2" type="search" placeholder="Search for events,locations.." aria-label="Search" id="searchInput" name="searchQuery">
-          <button class="btn btn-outline-success " type="submit">Go</button>
+          <button class="btn btn-outline-success " type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
         </form>
      </div>
-     <div class="me-5 ms-lg-auto ms-lg-5 justify-content-lg-end">
+     <div class="me-4 ms-lg-auto ms-lg-5 justify-content-lg-start">
         <form class="d-none d-lg-flex me-lg-5 ms-lg-auto" action="/search-events-by-date-and-location" method="POST">
             <div class="input-group">
-                <label for="from-date" class="me-2">From:</label>
+                <label id="date-header" for="from-date" class="me-2">From :</label>
         <input type="date" class="form-control me-2" id="from-date" name="fromDate">
-        <label for="to-date" class="me-2">To:</label>
+        <label id="date-header" for="to-date" class="me-2">To :</label>
         <input type="date" class="form-control me-2" id="to-date" name="toDate">
-        <label for="select-location" class="me-2">Select location</label>
-        <select class="form-select me-2" name="location" id="cities">
+        <label id="date-header" for="select-location" class="me-2">Select location </label>
+        <select id="to-date" class="form-select me-2" name="location" id="cities">
           <option value="Alappuzha">Alappuzha</option>
           <option value="Thrissur">Thrissur</option>
           <option value="Palakkad">Palakkad</option>
@@ -68,18 +70,17 @@
         <button class="btn btn-outline-success" type="submit" id="go">Go</button>
         </form>
       </div>
-      <div class="d-none d-lg-flex align-items-center">
-        <a href="#" class="ms-3 text-decoration-none">Logout</a>
+      <div  class="d-none d-lg-flex align-items-center">
         <div id="myNav" class="overlay">
           <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
           <div class="overlay-content">
+            <a href="#">Logout</a>
             <a href="#">About</a>
-            <a href="#">Services</a>
-            <a href="#">Clients</a>
+            <a href="/admin">List an event</a>
             <a href="#">Contact</a>
           </div>
         </div>
-        <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
+        <span id="sandwich" onclick="openNav()">&#9776;</span>
      </div>
   </header>
   <div class="carousel-test">
@@ -97,7 +98,7 @@
          <% }); %>
       </div>
       <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+         <span  class="carousel-control-prev-icon" aria-hidden="true"></span>
          <span class="visually-hidden">Previous</span>
       </button>
       <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
@@ -108,63 +109,83 @@
      
      
   </div>
-  <div class="image-ranking">
-    <ul class="event-list">
-      <div class="jumbotron">
-        <h1>Trending</h1>
-    
-        <ul>
-          <% rankedEvents.forEach(function(event) { %>
-            <li>
-              <strong><%= event.textbox4 %></strong>
-              <p>Email: <%= event.datePicker %></p>
-              <p>Total Tickets: <%= event.totalTickets %></p>
-            </li>
-          <% }); %>
-        </ul>
-     </div>
-     
-      
-    </ul>
-   </div>
-   
-    
-
-
   <div class="image-container">
-    <img id="image" src="image1.png" alt="Image 1">
-    <img id="image" src="image2.png" alt="Image 2">
-    <img id="image" src="image3.png" alt="Image 3">
-    <img id="image" src="image4.png" alt="Image 4">
-    <img id="image" src="image5.png" alt="Image 5">
+    <img id="image" src="image1.png" alt="Image 1" data-dropdown1="Workshops">
+    <img id="image" src="image2.png" alt="Image 2" data-dropdown1="Theatre">
+    <img id="image" src="image3.png" alt="Image 3" data-dropdown1="Free">
+    <img id="image" src="image4.png" alt="Image 4" data-dropdown1="Comedy">
+    <img id="image" src="image5.png" alt="Image 5" data-dropdown1="Courses">
 </div>
+<h1 id="trending">Trending Now</h1>
+    <div class="container-trending">
+      <% rankedEvents.forEach(function(event) { %>
+        
+       <div class="card-trending"  data-event-id="<%= event._id %>">
+        <img src="<%= event.imagePath %>" alt="Image 1">
+          
+          <div class="card-content">
 
+            <h3 class="text" style="padding-left: 5px;font-weight: bold;padding-top: 7px;"><%= event.textbox4 %></h3>
 
+            <div class="icon-text-container">
+              <i class="fa-regular fa-calendar"></i>
+              <p class="text" id="text-trending-card"><%= new Date(event.datePicker).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+          </div>
+          <div class="icon-text-container">
+              <i class="fa-solid fa-location-dot"></i>
+              <p class="text" id="text-trending-card"><%= event.dropdown2 %></p>
+          </div>
+          </div>
+      
+        </div>
+        <% }); %>
+</div>
+<footer>
+  <div class="row-footer">
+      <div class="col-footer">
+      <h1 class="logo-footer">crowwd</h1>                    
+         <p>Crowwd is a one stop marketplace for events, music festivals,cultural
+          festivals, concerts, venues etc.Whether it’s a concert, conference, workshop, or cultural festival</p>
+      </div>
+      <div class="col">
+          <h3>FISAT</h3>
+          <p>Hormiz nagar, Mookkanoor</p>
+          <p>Angamaly,683576</p>
+          <p class="email-id-footer">arunmanoj005@gmail.com</p>
+          <p>+91-9400358309</p>
+      </div>
+      
+      <div class="col">
+          <div class="social-icons-footer">
+              <i class="fa-brands fa-instagram"></i>
+              <i class="fa-brands fa-facebook"></i>
+              <i class="fa-brands fa-x-twitter"></i>
+          </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', (event) => {
+      </div>
+  </div>
+  <hr class="hr-footer">
+  <p class="copyright-footer">crowwd &copy; 2024 All Rights Reserved </p>
+</footer>
+ <script>
+   document.addEventListener('DOMContentLoaded', (event) => {
      var carouselElement = document.querySelector('#carouselExampleIndicators');
      var carousel = new bootstrap.Carousel(carouselElement, {
        interval: 6000, 
      });
   });
- </script>
- <script>
+  document.querySelectorAll('.image-container img').forEach(img => {
+     img.addEventListener('click', function() {
+       const dropdown1Value = this.getAttribute('data-dropdown1');
+       window.location.href = `/filter-events?dropdown1=${dropdown1Value}`;
+     });
+  });
   window.onload = function() {
      document.getElementById('loader').style.display = 'none';
   };
- </script>
- 
-
-
-  <script>
-     $(document).ready(function() {
+  $(document).ready(function() {
     $('.box').click(function() {
-        // Get the current width of the search input field
         var currentWidth = $('#searchInput').width();
-        
-        // Set the width of the search input field to its current width
-        // This stops the animation by overriding the CSS transition
         $('#searchInput').css('width', currentWidth + 'px');
     });
 });
@@ -175,7 +196,15 @@
     function closeNav() {
       document.getElementById("myNav").style.height = "0%";
     }
-    </script>
+    document.addEventListener('DOMContentLoaded', function() {
+ document.querySelectorAll('.card-trending').forEach(card => {
+    card.addEventListener('click', function() {
+      const eventId = this.getAttribute('data-event-id');
+      window.location.href = `/event/${eventId}`;
+    });
+ });
+});
+ </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jY38PBHQiwNzxEh7xdsJBj9zIxq7Czs" crossorigin="anonymous"></script>
   <script src="https://kit.fontawesome.com/your-fontawesome-kit-code.js" crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

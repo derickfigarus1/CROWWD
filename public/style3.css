@@ -14,6 +14,11 @@
   padding: 0;
   font-family: Arial, sans-serif;
   flex-wrap: wrap;
+  width: 100%;
+  background-color: #fbfbfc;
+}
+.similar-events{
+    padding-bottom: 30px;
 }
 
 @media (max-width: 768px) {
@@ -29,8 +34,25 @@
 }
 
 header {
-    height: 80px;
-    background-color: #333;
+    height: 90px;
+    background: black;
+}
+#date-header{
+    color: #f0e5c7;
+    font-size: 20px;
+    padding-left: 20px;
+}
+#from-date{
+    border-radius: 10px;
+}
+#to-date{
+    border-radius: 10px;
+}
+#sandwich{
+    padding-right: 5px;
+    font-size:40px;
+    cursor:pointer;
+    color: #c3073f;
 }
 
 .d-none.d-lg-flex.me-5.ms-lg-auto.ms-lg-5.justify-content-lg-end {
@@ -180,9 +202,20 @@ padding-top: 20px;}
     margin: 5px 0;
     padding-left: 7px;
 }
-
+#icons-event-details{
+    position: absolute;
+}
 .event-card h3 {
     color: #c3073f;
+}
+#your-events{
+    font-family: Copperplate, fantasy;
+    color:rgb(29, 29, 100);
+    padding-left: 50px;
+
+}
+#travel-event-details{
+    padding-top: 55px;
 }
 
 .your-events {
@@ -261,39 +294,40 @@ img {
         width: 90%; /* Adjust as needed */
     }
 }
-
-/* Custom CSS for separators */
-/* Remove border from the last icon */
-.travel i:last-child {
-    border-right: none;
-    padding-right: 0;
-}
-
 .travel {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    background-color: #f2e8fc; /* Assuming you want a background color for the travel container */
-    border-radius: 10px;
-    padding: 0 20px;
-    min-height: 100px;
+    display: flex; /* Use Flexbox to align children */
+    justify-content: space-between; /* Equal space between children */
+    align-items: flex-start; /* Align children to the top */
+    gap: 25px; /* Gap between children */
+    background: rgba(222, 191, 235, 0.822);
+    border-radius:10px;
+    color: black;
+    padding-left: 10px;
+    padding-right: 10px;
+   }
+   
+   .icon-container {
+    display: flex; /* Use Flexbox to align icon and text */
+    flex-direction: column; /* Stack icon and text vertically */
+    align-items: center; /* Center icon and text horizontally */
+    padding-top: 25px;
+    flex:1;
+   }
+#icons-event-details{
+    position: absolute;
 }
 
-.d-flex.align-items
-
--left {
+#view-details{
+    background-color: #c3073f;
+    color: white;
+    border-color: #c3073f;
+}
+.d-flex.align-items-left {
     padding-top: 20px;
 }
 
-.icon-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column; /* Stack icon and <p> tag vertically */
-    justify-content: center;
-    align-items: center;
-    padding: 10px 10px; /* Add padding to the left and right of each icon container */
-    border-right: 1px solid #d0aef2;
-}
+
+
 
 #decrementButton,
 #incrementButton {
@@ -310,14 +344,9 @@ img {
     background-color: red;
 }
 
-.icon-container * {
-    margin: 0;
-    padding: 0;
-}
 
-.icon-container:last-child {
-    border-right: none; /* Remove the separator line from the last icon container */
-}
+/* If you want to space the icons evenly, you might need to adjust their left property individually */
+
 
 .col-md-6:last-child .form-control {
     width: 50px; /* Adjust as needed */
@@ -355,40 +384,211 @@ img {
 .col-md-6 {
     padding: 0;
 }
+#text-trending-card{
+    padding-top: 20px;
+    color: #c3073f;
+    font-family: 'Times New Roman',serif;
+    padding-left: 6px;
+}
+.image-container img{
+    cursor: pointer;
+}
 
 .col-md-6:last-child {
     flex: 0 0 60%;
     max-width: 60%;
 }
 .carousel-test{
-   align-items: center;
-   width: 1438px;
-   height: auto;
-   padding-left: 399px;
-   padding-top: 63px;
+    align-items: center;
+    width: 1691px;
+    height: auto;
+    padding-left: 250px;
+    padding-top: 63px;
 
-
    }
-   .loader {
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 9999;
-   }
-   .loader {
-    display: none;
-   }
-   
+.carousel-item{
+    width:1500px;
+    height: 700px;
+}
    
    @keyframes spin {
      0% { transform: rotate(0deg); }
      100% { transform: rotate(360deg); }
    }
-   
+ 
+
+footer{
+    width: 100%;
+    bottom: 0;
+    background: linear-gradient(to right,#00093c,#2d0b00);
+    color: #fff;
+    padding: 30px 0 10px;
+    font-family: 'poppins','sans-serif';
+    box-sizing: border-box;
+    font-size: 13px;
+}
+.row-footer{
+    width: 85%;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+.col-footer{
+    flex-basis: 35%;
+    padding: 10px ;
+
+}
+.col p{
+    margin-bottom: 2px;
+}
+.col-footer:nth-child(2),.col-footer:nth-child(3) {
+    flex-basis: 15%;
+}
+.logo-footer{
+    width: 80px;
+    margin-bottom: 20px;
+}
+.col-footer h3{
+    width: fit-content;
+    margin-bottom: 20px;
+    position: relative;
+
+}
+.email-id-footer{
+    width: fit-content;
+    border-bottom: 1px solid #ccc;
+
+margin: 2px 0;
+}
+
+.col{
+    padding-left: 30px;
+}
+
+.social-icons-footer .fa-brands{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 40px;
+    font-size: 20px;
+    color: #000;
+    background: #fff;
+    margin-right: 15px;
+    cursor: pointer;
+
+}
+.hr-footer{
+    width: 90%;
+    border: 0;
+    border-bottom: 1px solid #ccc;
+}
+.copyright-footer{
+    text-align: center;
+}
+
+#trending{
+    font-family:Copperplate, fantasy;
+    color:rgb(29, 29, 100);
+    padding-left: 50px;
+
+}
+
+
+
+.container-trending {
+    padding-left: 100px;
+    padding-right: 100px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-bottom:150px;
+
+}
+
+.card-trending{
+    width: 470px;
+    background-color: #fff;
+    margin: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.card-trending:hover {
+    transform: translateY(-10px);
+}
+
+.card-trending img {
+    width: 100%; /* Adjust the width as needed */
+    height: 250px; /* Adjust the height as needed */
+    object-fit: cover; 
+    border-bottom: 1px solid #ddd;
+}
+
+.card-content-trending {
+    padding: 20px;
+}
+
+.card-trending h3 {
+    margin-top: 0;
+    font-size: 1.2rem;
+}
+
+.card-trending p {
+    color: #555;
+}
+
+.popup{
+    width: 400px;
+    background-color: rgb(17, 30, 65); /* Adjust the alpha value (0.5 in this case) to set the desired transparency */
+    border-radius: 6px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%,-50%) scale(0.1);
+    text-align: center;
+    padding: 0 30px 30px;
+    color: #f0e5c7;
+    visibility: hidden;
+    transition: transform 0.4s,top 0.4s;
+
+}
+#event-desc{
+    font-family: georgia,serif;
+}
+.popup img{
+    width: 100px;
+margin-top:  -50px;
+border-radius: 50%;
+box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.popup h2{
+    font-size: 38px;
+    font-weight: 500;
+    margin: 30px 0 10px;
+
+}
+#popup-button{
+    width: 100%;
+    margin-top: 50px;
+    padding: 10px 0;
+    background: #c3073f;
+    color: #fff;
+    border: 0;
+    outline: none;
+    font-size: 18px;
+    border-radius: 4px;
+    box-shadow: 0 5px 5px rgba(0,0,0,0.2);
+    cursor: pointer;
+}
+.open-popup{
+    visibility: visible;
+    top: 50%;
+    transform: translate(-50%,-50%) scale(1);
+
+}
