@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/style3.css">
 </head>
 <body class="body-home">
+  <div id="loader" class="loader"></div>
  <header class="container-fluid d-flex justify-content-between align-items-center py-3">
     <div class="d-flex align-items-center me-auto w-75">
         <a href="#" class="text-decoration-none d-flex align-items-center">
@@ -81,11 +82,36 @@
         <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
      </div>
   </header>
+  <div class="carousel-test">
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-indicators">
+         <% images.forEach(function(image, index) { %>
+           <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="<%= index %>" class="<%= index === 0 ? 'active' : '' %>"></button>
+         <% }); %>
+      </div>
+      <div class="carousel-inner">
+         <% images.forEach(function(image, index) { %>
+           <div class="carousel-item <%= index === 0 ? 'active' : '' %>" data-bs-interval="6000">
+             <img src="<%= image.imagePath %>" class="d-block w-100" alt="...">
+           </div>
+         <% }); %>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+         <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+         <span class="carousel-control-next-icon" aria-hidden="true"></span>
+         <span class="visually-hidden">Next</span>
+      </button>
+     </div>
+     
+     
+  </div>
   <div class="image-ranking">
     <ul class="event-list">
       <div class="jumbotron">
-        <h1>Top Ranked Events</h1>
-        <p>Here are the top events based on ticket sales:</p>
+        <h1>Trending</h1>
     
         <ul>
           <% rankedEvents.forEach(function(event) { %>
@@ -93,7 +119,6 @@
               <strong><%= event.textbox4 %></strong>
               <p>Email: <%= event.datePicker %></p>
               <p>Total Tickets: <%= event.totalTickets %></p>
-              <p>Percentage Sold: <%= event.percentage.toFixed(2) %>%</p>
             </li>
           <% }); %>
         </ul>
@@ -116,7 +141,20 @@
 
 
 
-
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+     var carouselElement = document.querySelector('#carouselExampleIndicators');
+     var carousel = new bootstrap.Carousel(carouselElement, {
+       interval: 6000, 
+     });
+  });
+ </script>
+ <script>
+  window.onload = function() {
+     document.getElementById('loader').style.display = 'none';
+  };
+ </script>
+ 
 
 
   <script>
