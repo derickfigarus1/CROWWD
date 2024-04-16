@@ -95,32 +95,32 @@ app.post("/register", async (req, res) => {
  });
 // Login user 
 app.post("/login", async (req, res) => {
- try {
-    const check = await collection.findOne({ email: req.body.email });
-    if (!check) {
-      return res.render('login', { errorMessage: "User name cannot found!" });
-    }
-    // Compare the hashed password from the database with the plaintext password
-    const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
-    if (!isPasswordMatch) {
-      return res.render('login', { errorMessage: "Wrong Password!" });
-    }
-    // Fetch ranked events before rendering the home view
-    const rankedEvents = await getRankedEvents();
-    req.session.email = check.email;
-    req.session.name = check.name; // Set the user's name in the session
-    if (check.user_type === 'admin') {
-      // Redirect to admin.html
-      res.render('admin', { name: check.name });
-    } else {
-      res.render('home', { name: check.name, rankedEvents: rankedEvents });
-    }
- } catch (error) {
-    console.error(error);
-    res.render('login', { errorMessage: "An error occurred during login." });
- }
-});
-
+  try {
+     const check = await collection.findOne({ email: req.body.email });
+     if (!check) {
+       return res.render('login', { errorMessage: "User name cannot found!" });
+     }
+     // Compare the hashed password from the database with the plaintext password
+     const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
+     if (!isPasswordMatch) {
+       return res.render('login', { errorMessage: "Wrong Password!" });
+     }
+     // Fetch ranked events before rendering the home view
+     const images = await Image.find({}, { imagePath: 1, _id: 0 });
+     const rankedEvents = await getRankedEvents();
+     req.session.email = check.email;
+     req.session.name = check.name; // Set the user's name in the session
+     if (check.user_type === 'admin') {
+       // Redirect to admin.html
+       res.render('admin', { name: check.name });
+     } else {
+       res.render('home', { name: check.name, rankedEvents: rankedEvents ,images: images}); 
+     }
+  } catch (error) {
+     console.error(error);
+     res.render('login', { errorMessage: "An error occurred during login." });
+  }
+ });
 async function getRankedEvents() {
  try {
     const topEvents = await Image.aggregate([
@@ -292,24 +292,24 @@ app.post('/search-events', async (req, res) => {
 
 app.get('/event/:id', async (req, res) => {
   try {
-     // Extract the event ID from the request parameters
-     const eventId = req.params.id;
- 
-     // Find the event in the database using the provided ID
-     const event = await Image.findById(eventId);
- 
-     // If the event is not found, send a 404 response
-     if (!event) {
-       return res.status(404).send('Event not found');
-     }
- 
-     // Render the event details view, passing the event data
-     res.render('event-details', { event: event });
+      const eventId = req.params.id;
+      const event = await Image.findById(eventId);
+      if (!event) {
+        return res.status(404).send('Event not found');
+      }
+      // Fetch similar events
+      const similarEvents = await Image.find({
+        dropdown1: event.dropdown1,
+        _id: { $ne: eventId } // Exclude the current event
+      });
+      console.log(similarEvents)
+      res.render('event-details', { event: event, similarEvents: similarEvents });
   } catch (error) { 
-     console.error(error);
-     res.status(500).send('Server error');
+      console.error(error);
+      res.status(500).send('Server error');
   }
  });
+ 
  app.post('/book-event/:id', async (req, res) => {
   try {
       const eventId = req.params.id;
