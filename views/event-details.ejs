@@ -1,249 +1,305 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <link rel="stylesheet" href="/style3.css">
-    <link rel="icon" href="logo.png"
-    type="image/x-icon">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+  <link rel="stylesheet" href="/style3.css">
 
 </head>
+
 <body>
   <header class="container-fluid d-flex justify-content-start align-items-center py-4">
     <div class="d-flex align-items-center me-auto ">
-        <a href="#" class="text-decoration-none d-flex align-items-center">
-          <h1 class="me-5">crowwd</h1>
-        </a>
-        <form class="d-flex me-3" action="/search-events" method="POST" >
-          <input class="form-control me-2" type="search" placeholder="Search for events,locations.." aria-label="Search" id="searchInput" name="searchQuery">
-          <button class="btn btn-outline-success " type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-        </form>
-     </div>
-     <div class="me-4 ms-lg-auto ms-lg-5 justify-content-lg-start">
-        <form class="d-none d-lg-flex me-lg-5 ms-lg-auto" action="/search-events-by-date-and-location" method="POST">
-            <div class="input-group">
-                <label id="date-header" for="from-date" class="me-2">From :</label>
-        <input type="date" class="form-control me-2" id="from-date" name="fromDate">
-        <label id="date-header" for="to-date" class="me-2">To :</label>
-        <input type="date" class="form-control me-2" id="to-date" name="toDate">
-        <label id="date-header" for="select-location" class="me-2">Select location </label>
-        <select id="to-date" class="form-select me-2" name="location" id="cities">
-          <option value="Alappuzha">Alappuzha</option>
-          <option value="Thrissur">Thrissur</option>
-          <option value="Palakkad">Palakkad</option>
-          <option value="Malappuram">Malappuram</option>
-          <option value="Manjeri">Manjeri</option>
-          <option value="Thalassery">Thalassery</option>
-          <option value="Kannur">Kannur</option>
-          <option value="Kasaragod">Kasaragod</option>
-          <option value="Kollam">Kollam</option>
-          <option value="Neyyattinkara">Neyyattinkara</option>
-          <option value="Kottayam">Kottayam</option>
-          <option value="Pala">Pala</option>
-          <option value="Aluva">Aluva</option>
-          <option value="Angamaly">Angamaly</option>
-          <option value="Thodupuzha">Thodupuzha</option>
-          <option value="Muvattupuzha">Muvattupuzha</option>
-          <option value="Perumbavoor">Perumbavoor</option>
-          <option value="Kothamangalam">Kothamangalam</option>
-          <option value="Vaikom">Vaikom</option>
-          <option value="Cherthala">Cherthala</option>
-          <option value="Changanassery">Changanassery</option>
-          <option value="Kozhencherry">Kozhencherry</option>
-          <option value="Adoor">Adoor</option>
-          <option value="Pathanamthitta">Pathanamthitta</option>
-          <option value="Pandalam">Pandalam</option>
-          <option value="Kayamkulam">Kayamkulam</option>
-          <option value="Mavelikkara">Mavelikkara</option>
-          <option value="Chengannur">Chengannur</option>
-          <option value="Thiruvalla">Thiruvalla</option>
-          <option value="Punalur">Punalur</option>
-          <option value="Paravur">Paravur</option>
-          <option value="Kochi">Kochi</option>
-          <option value="Kozhikode">Kozhikode</option>
-          <option value="Thiruvananthapuram">Thiruvananthapuram</option>
-          <option value="Kollam">Kollam</option>
-        </select>
+      <a href="#" class="text-decoration-none d-flex align-items-center">
+        <h1 class="me-5">crowwd</h1>
+      </a>
+      <form class="d-flex me-3" action="/search-events" method="POST">
+        <input class="form-control me-2" type="search" placeholder="Search for events,locations.." aria-label="Search"
+          id="searchInput" name="searchQuery">
+        <button class="btn btn-outline-success " type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+      </form>
     </div>
+    <div class="me-4 ms-lg-auto ms-lg-5 justify-content-lg-start">
+      <form class="d-none d-lg-flex me-lg-5 ms-lg-auto" action="/search-events-by-date-and-location" method="POST">
+        <div class="input-group">
+          <label id="date-header" for="from-date" class="me-2">From :</label>
+          <input type="date" class="form-control me-2" id="from-date" name="fromDate">
+          <label id="date-header" for="to-date" class="me-2">To :</label>
+          <input type="date" class="form-control me-2" id="to-date" name="toDate">
+          <label id="date-header" for="select-location" class="me-2">Select location </label>
+          <select id="to-date" class="form-select me-2" name="location" id="cities">
+            <option value="Alappuzha">Alappuzha</option>
+            <option value="Thrissur">Thrissur</option>
+            <option value="Palakkad">Palakkad</option>
+            <option value="Malappuram">Malappuram</option>
+            <option value="Manjeri">Manjeri</option>
+            <option value="Thalassery">Thalassery</option>
+            <option value="Kannur">Kannur</option>
+            <option value="Kasaragod">Kasaragod</option>
+            <option value="Kollam">Kollam</option>
+            <option value="Neyyattinkara">Neyyattinkara</option>
+            <option value="Kottayam">Kottayam</option>
+            <option value="Pala">Pala</option>
+            <option value="Aluva">Aluva</option>
+            <option value="Angamaly">Angamaly</option>
+            <option value="Thodupuzha">Thodupuzha</option>
+            <option value="Muvattupuzha">Muvattupuzha</option>
+            <option value="Perumbavoor">Perumbavoor</option>
+            <option value="Kothamangalam">Kothamangalam</option>
+            <option value="Vaikom">Vaikom</option>
+            <option value="Cherthala">Cherthala</option>
+            <option value="Changanassery">Changanassery</option>
+            <option value="Kozhencherry">Kozhencherry</option>
+            <option value="Adoor">Adoor</option>
+            <option value="Pathanamthitta">Pathanamthitta</option>
+            <option value="Pandalam">Pandalam</option>
+            <option value="Kayamkulam">Kayamkulam</option>
+            <option value="Mavelikkara">Mavelikkara</option>
+            <option value="Chengannur">Chengannur</option>
+            <option value="Thiruvalla">Thiruvalla</option>
+            <option value="Punalur">Punalur</option>
+            <option value="Paravur">Paravur</option>
+            <option value="Kochi">Kochi</option>
+            <option value="Kozhikode">Kozhikode</option>
+            <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+            <option value="Kollam">Kollam</option>
+          </select>
+        </div>
         <button class="btn btn-outline-success" type="submit" id="go">Go</button>
-        </form>
+      </form>
+    </div>
+    <div class="d-none d-lg-flex align-items-center">
+      <div id="myNav" class="overlay">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <div class="overlay-content">
+          <a href="#">Logout</a>
+          <a href="#">About</a>
+          <a href="/admin">List an event</a>
+          <a href="#">Contact</a>
+        </div>
       </div>
-      <div  class="d-none d-lg-flex align-items-center">
-        <div id="myNav" class="overlay">
-          <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-          <div class="overlay-content">
-            <a href="#">Logout</a>
-            <a href="#">About</a>
-            <a href="/admin">List an event</a>
-            <a href="#">Contact</a>
-          </div>
-        </div>
-        <span id="sandwich" onclick="openNav()">&#9776;</span>
-     </div>
+      <span id="sandwich" onclick="openNav()">&#9776;</span>
+    </div>
   </header>
-      
-      <div class="row w-100">
 
-        <!-- Image Column -->
-        <div class="col-12 col-md-8">
-            <img src="<%= event.imagePath %>" class="column-image" alt="Product Image">
+  <div class="row w-100">
+
+    <!-- Image Column -->
+    <div class="col-12 col-md-8">
+      <img src="<%= event.imagePath %>" class="column-image" alt="Product Image">
+    </div>
+    <!-- Product Details Column -->
+    <div class="col-12 col-md-4">
+      <h1>
+        <%= event.textbox4 %>
+      </h1>
+      <h2>
+        <%= event.textbox1 %>
+      </h2>
+      <p>
+        <%= event.textbox5 %>
+      </p>
+      <h4 id="event-desc">
+        <%= event.dropdown1 %>
+      </h4>
+      <h4 id="event-desc">
+        <%= new Date(event.datePicker).toLocaleDateString('en-US', {year: 'numeric' , month: 'long' , day: 'numeric' })
+          %>
+      </h4>
+      <h4 id="event-desc">Venue: <%= event.textbox6 %>
+      </h4>
+      <h4 id="event-desc">
+        <%= event.dropdown2 %>
+      </h4>
+      <br>
+      <br>
+      <h3>Travel</h3>
+      <br>
+
+      <div class="travel" id="<%= event._id%>">
+        <div class="icon-container">
+          <i class="fa-solid fa-bus fa-2x me-2" id="icons-event-details"></i>
+          <p id="travel-event-details">
+            <%= event.textbox7 %>
+          </p>
         </div>
-        <!-- Product Details Column -->
-        <div class="col-12 col-md-4">
-            <h1><%= event.textbox4 %></h1>
-            <h2><%= event.textbox1 %></h2>
-            <p><%= event.textbox5 %></p>
-            <h4 id="event-desc"><%= event.dropdown1 %></h4>
-            <h4 id="event-desc"><%= new Date(event.datePicker).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric' }) %></h4>
-            <h4 id="event-desc">Venue: <%= event.textbox6 %></h4>
-            <h4 id="event-desc"><%= event.dropdown2 %></h4>
-            <br>
-            <br>
-            <h3>Travel</h3>
-            <br>
-
-            <div class="travel">
-              <div class="icon-container">
-                  <i class="fa-solid fa-bus fa-2x me-2" id="icons-event-details"></i>
-                  <p id="travel-event-details"><%= event.textbox7 %></p>
-              </div>
-              <div class="icon-container">
-                  <i class="fa-solid fa-train fa-2x me-2" id="icons-event-details"></i>
-                  <p id="travel-event-details"><%= event.textbox8 %></p>
-              </div>
-              <div class="icon-container">
-                  <i class="fa-solid fa-plane-departure fa-2x" id="icons-event-details"></i>
-                  <p id="travel-event-details"><%= event.textbox9 %></p>
-              </div>
-          </div>
-          <br>
-          <br>
-          
-          <h5 id="event-desc"> Tickets available : <%= event.totalTickets %></h5>
-          
-              <form id="bookEventForm" action="/book-event/<%= event._id %>" method="post">
-                <div class="d-flex align-items-left">
-
-                <input type="number" class="form-control text-center" value="1"  id="quantity" name="quantity">
-            </div>
-            <button class="btn btn-success mt-3" type="submit" onclick="openPopup()">Book Now</button>
-            <div class="popup" id="popup">
-              <img src="Background.png" alt="">
-              <h2>Thank You</h2>
-              <p>Event Booked </p>
-              <button type="button" id="popup-button" onclick="closePopup()">OK</button>
-          </div>
-              </form>
-               
+        <div class="icon-container">
+          <i class="fa-solid fa-train fa-2x me-2" id="icons-event-details"></i>
+          <p id="travel-event-details">
+            <%= event.textbox8 %>
+          </p>
         </div>
+        <div class="icon-container">
+          <i class="fa-solid fa-plane-departure fa-2x" id="icons-event-details"></i>
+          <p id="travel-event-details">
+            <%= event.textbox9 %>
+          </p>
+        </div>
+      </div>
+      <br>
+      <br>
+
+      <h5 id="event-desc"> Tickets available : <%= event.totalTickets %>
+      </h5>
+
+      <form id="bookEventForm" action="/book-event/<%= event._id %>" method="post">
+        <div class="d-flex align-items-left">
+
+          <input type="number" class="form-control text-center" value="1" id="quantity" name="quantity">
+        </div>
+        <input type="hidden" name="eventId" value="<%= event._id %>">
+
+        <button class="btn btn-success mt-3" type="submit" onclick="openPopup()">Book Now</button>
+        <div class="popup" id="popup">
+          <h2>Thank You</h2>
+          <p>Event Booked </p>
+          <button type="button" id="popup-button" onclick="closePopup()">OK</button>
+          <div id="qrCode" style="display:none"></div>
+        </div>
+      </form>
 
     </div>
-    <br>
-    <br>
 
-  
-    <!-- Similar Events Section -->
-<div class="similar-events">
-  <h2 id="trending">Similar Events</h2>
-  <div class="row">
-      <% similarEvents.forEach(function(event) { %>
-          <div class="col-md-4">
-              <div class="card">
-                  <img src="<%= event.imagePath %>" class="card-img-top" alt="Event Image">
-                  <div class="card-body">
-                      <h5 class="card-title"><%= event.textbox4 %></h5>
-                      <p class="card-text"><%= event.textbox1 %></p>
-                      <a href="/event/<%= event._id %>" id="view-details" class="btn btn-primary">View Details</a>
-                  </div>
-              </div>
-          </div>
-      <% }); %>
   </div>
-</div>
-<footer>
-  <div class="row-footer">
+  <br>
+  <br>
+
+
+  <!-- Similar Events Section -->
+  <div class="similar-events">
+    <h2 id="trending">Similar Events</h2>
+    <div class="row">
+      <% similarEvents.forEach(function(event) { %>
+        <div class="col-md-4">
+          <div class="card">
+            <img src="<%= event.imagePath %>" class="card-img-top" alt="Event Image">
+            <div class="card-body">
+              <h5 class="card-title">
+                <%= event.textbox4 %>
+              </h5>
+              <p class="card-text">
+                <%= event.textbox1 %>
+              </p>
+              <a href="/event/<%= event._id %>" id="view-details" class="btn btn-primary">View Details</a>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+    </div>
+  </div>
+  <footer>
+    <div class="row-footer">
       <div class="col-footer">
-      <h1 class="logo-footer">crowwd</h1>                    
-         <p>Crowwd is a one stop marketplace for events, music festivals,cultural
+        <h1 class="logo-footer">crowwd</h1>
+        <p>Crowwd is a one stop marketplace for events, music festivals,cultural
           festivals, concerts, venues etc.Whether it’s a concert, conference, workshop, or cultural festival</p>
       </div>
       <div class="col">
-          <h3>FISAT</h3>
-          <p>Hormiz nagar, Mookkanoor</p>
-          <p>Angamaly,683576</p>
-          <p class="email-id-footer">arunmanoj005@gmail.com</p>
-          <p>+91-9400358309</p>
+        <h3>FISAT</h3>
+        <p>Hormiz nagar, Mookkanoor</p>
+        <p>Angamaly,683576</p>
+        <p class="email-id-footer">arunmanoj005@gmail.com</p>
+        <p>+91-9400358309</p>
       </div>
-      
+
       <div class="col">
-          <div class="social-icons-footer">
-              <i class="fa-brands fa-instagram"></i>
-              <i class="fa-brands fa-facebook"></i>
-              <i class="fa-brands fa-x-twitter"></i>
-          </div>
+        <div class="social-icons-footer">
+          <i class="fa-brands fa-instagram"></i>
+          <i class="fa-brands fa-facebook"></i>
+          <i class="fa-brands fa-x-twitter"></i>
+        </div>
 
       </div>
-  </div>
-  <hr class="hr-footer">
-  <p class="copyright-footer">crowwd &copy; 2024 All Rights Reserved </p>
-</footer>
+    </div>
+    <hr class="hr-footer">
+    <p class="copyright-footer">crowwd &copy; 2024 All Rights Reserved </p>
+  </footer>
+
+
+  <script>
+    const quantity = document.getElementById('quantity').value;
+    const id = document.getElementsByClassName('travel')[0].id;
+
+    const uniqueId = `${id}@${quantity}`
+
+    const encodedUniqueId = encodeURIComponent(uniqueId);
+
+    const qrcode = new QRCode(document.getElementById("qrCode"), {
+      text: encodedUniqueId,
+      width: 256,
+      height: 256,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.M
+    });
+
+    document.getElementById("qrCode").style.display = "block"
+
+
+
+  </script>
 
 
 
 
-
-   
-
-<script>
-  document.getElementById('bookEventForm').addEventListener('submit', function(event) {
+  <script>
+    document.getElementById('bookEventForm').addEventListener('submit', function (event) {
       var quantityInput = document.getElementById('quantity');
       var quantityValue = parseInt(quantityInput.value, 10);
-  
+
       if (isNaN(quantityValue) || quantityValue <= 0) {
-          alert('Please enter a valid quantity.');
-          event.preventDefault(); // Prevent form submission
+        alert('Please enter a valid quantity.');
+        event.preventDefault(); // Prevent form submission
       }
-  });
-  let popup=document.getElementById("popup");
-        function openPopup(){
-            popup.classList.add("open-popup");
-        }
-        function closePopup(){
-            popup.classList.remove("open-popup");
-        }
+    });
+    let popup = document.getElementById("popup");
+    function openPopup() {
+      popup.classList.add("open-popup");
+    }
+    function closePopup() {
+      document.getElementById("qrCode").innerHTML = "";
+      popup.classList.remove("open-popup");
+    }
   </script>
-  
 
 
 
-      <script>
-        $(document).ready(function() {
-       $('.box').click(function() {
-           // Get the current width of the search input field
-           var currentWidth = $('#searchInput').width();
-           
-           // Set the width of the search input field to its current width
-           // This stops the animation by overriding the CSS transition
-           $('#searchInput').css('width', currentWidth + 'px');
-       });
-   });
-       function openNav() {
-         document.getElementById("myNav").style.height = "100%";
-       }
-       
-       function closeNav() {
-         document.getElementById("myNav").style.height = "0%";
-       }
-       </script>
-       
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jY38PBHQiwNzxEh7xdsJBj9zIxq7Czs" crossorigin="anonymous"></script>
-      <script src="https://kit.fontawesome.com/your-fontawesome-kit-code.js" crossorigin="anonymous"></script>
-      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    $(document).ready(function () {
+      $('.box').click(function () {
+        // Get the current width of the search input field
+        var currentWidth = $('#searchInput').width();
+
+        // Set the width of the search input field to its current width
+        // This stops the animation by overriding the CSS transition
+        $('#searchInput').css('width', currentWidth + 'px');
+      });
+    });
+    function openNav() {
+      document.getElementById("myNav").style.height = "100%";
+    }
+
+    function closeNav() {
+      document.getElementById("myNav").style.height = "0%";
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jY38PBHQiwNzxEh7xdsJBj9zIxq7Czs"
+    crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/your-fontawesome-kit-code.js" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
