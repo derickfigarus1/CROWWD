@@ -1,21 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Profile</title>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>User Profile</title>
+ <link rel="stylesheet" href="/style3.css">
 </head>
 <body>
-  <h1>User Profile</h1>
-  <ul>
-    <% bookedEvents.forEach(event => { %>
-      <li>
-        <h2><%= event.event.textbox4 %></h2>
-        <p>Date: <%= new Date(event.event.datePicker).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric' }) %></p>
-        <p>Location: <%= event.event.dropdown2 %></p>
-        <!-- Add more event details as needed -->
-      </li>
-    <% }); %>
-  </ul>
+ <h1>User Profile</h1>
+ <div class="user-events">
+  <% bookedEvents.forEach(event => { %>
+
+            <figure>
+
+              <img src="<%= event.event.imagePath %>" alt="event image">
+              <figcaption><%= event.event.textbox4 %></figcaption>
+          </figure>
+          <% }); %>
+
+ </div>
 </body>
 </html>
+<!--
+        <% bookedEvents.forEach(event => { %>
+
+  <p>Location: <%= event.event.dropdown2 %></p>
+        <% }); %>
+
+-->

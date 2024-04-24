@@ -115,4 +115,38 @@
      margin: 20px auto;
      max-width: 90%;
  }
- 
+ .event-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-right:10px;
+}
+
+.event-card h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.event-card p {
+    margin: 5px 0;
+    color: #666;
+}
+#events-list{
+    margin-left: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    margin-right:15px;
+    
+}
+.event-item{
+    width: 50%;
+}
+#preview{
+    padding-left: 300px;
+}
+#event-list-head{
+    padding-left: 15px;
+}

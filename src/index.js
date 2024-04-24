@@ -33,6 +33,7 @@ cloudinary.config({
   api_key: process.env.API_KEY,
   api_secret: process.env.API_SECRET
 });
+
 //multer library used for image storing middleware
 const upload = multer({
   storage: multer.diskStorage({
@@ -57,7 +58,6 @@ app.get("/", (req, res) => {
   res.render("login");
 });
 app.get("/register", (req, res) => {
-  // Pass an empty string as the default message
   res.render("register", { message: "" });
 });
 
@@ -71,10 +71,10 @@ app.post("/register", async (req, res) => {
       c_password: req.body.c_password,
       user_type: req.body.user_type
     };
-    // Check if the username already exists in the database
     if (data.password !== data.c_password) {
       res.render("register", { message: 'Passwords do not match.' });
     }
+        // Check if the username already exists in the database
     const existingUser = await collection.findOne({ email: data.email });
     if (existingUser) {
       res.render("register", { message: 'User already exists.' });
@@ -104,7 +104,7 @@ app.post("/login", async (req, res) => {
     if (!check) {
       return res.render('login', { errorMessage: "User name cannot found!" });
     }
-    // Compare the hashed password from the database with the plaintext password
+    // Compare the hashed password from the database with the plain text password
     const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
     if (!isPasswordMatch) {
       return res.render('login', { errorMessage: "Wrong Password!" });
@@ -118,7 +118,6 @@ app.post("/login", async (req, res) => {
     req.session.email = check.email;
     req.session.name = check.name; // Set the user's name in the session
     if (check.user_type === 'admin') {
-      // Redirect to admin.html
       res.render('admin', { name: check.name, events: events });
     } else {
       res.render('home', { name: check.name, rankedEvents: rankedEvents, images: images });
@@ -134,7 +133,7 @@ async function getRankedEvents() {
     const topEvents = await Image.aggregate([
       {
         $lookup: {
-          from: 'tickets', // Assuming 'tickets' is the collection name for Ticket model
+          from: 'tickets', 
           localField: '_id',
           foreignField: 'eventId',
           as: 'ticketInfo'
@@ -170,7 +169,7 @@ async function getRankedEvents() {
     return topEvents;
   } catch (error) {
     console.error(error);
-    throw error; // Rethrow the error to handle it in the calling function
+    throw error; 
   }
 }
 
@@ -197,7 +196,7 @@ const imageSchema = new mongoose.Schema({
   },
   clicks: {
     type: Number,
-    default: 0 // Default value is 0
+    default: 0 
   }
 });
 // Create a model from the schema
@@ -233,17 +232,17 @@ app.post('/submit', upload.single('imageUploader'), async (req, res) => {
       dropdown1: req.body.dropdown1,
       dropdown2: req.body.dropdown2,
       imagePath: imagePath,
-      totalTickets: totalTickets // Assuming you have a new input field for total tickets
+      totalTickets: totalTickets 
     });
     await image.save();
-    // Create a new ticket document for the event
+  
     const newTicket = new Ticket({
       eventId: image._id,
       totalTickets: req.body.totalTickets
     });
     await newTicket.save();
     req.flash('message', 'Event registered successfully.');
-    res.redirect('/admin'); // Redirect to the admin page
+    res.redirect('/admin');
   } catch (error) {
     console.error(error);
   }
@@ -266,7 +265,7 @@ app.get('/admin', async (req, res) => {
   const userEmail = req.session.email; // Get the current session's email
   const events = await Image.find({ email: userEmail }); // Fetch events by email
   res.locals.messages = req.flash();
-  res.render('admin', { name: name, events: events }); // Pass the events to the template
+  res.render('admin', { name: name, events: events }); 
 });
 //searching for events that match date and location selected
 app.post('/search-events-by-date-and-location', async (req, res) => {
@@ -279,7 +278,7 @@ app.post('/search-events-by-date-and-location', async (req, res) => {
   });
   res.render('events', { events: events });
 });
-//searching the database for words
+//searching the database for texts
 app.post('/search-events', async (req, res) => {
   const searchQuery = req.body.searchQuery;
   const events = await Image.find({
@@ -329,7 +328,7 @@ app.post('/book-event/:id', async (req, res) => {
        return res.status(404).send('Event not found');
      }
      console.log(req.session.email)
-     const userEmail = req.session.email; // Assuming you have the user's email in the session
+     const userEmail = req.session.email; 
      console.log('Email from session:', userEmail);
      const user = await User.findOne({ email: userEmail });
      console.log('User found:', user);
@@ -338,18 +337,15 @@ app.post('/book-event/:id', async (req, res) => {
        return res.status(404).send('User not found');
      }
  
-     // Use the user's ObjectId, not their email
      const newBooking = new Booking({
-       user: user._id, // Use the user's ObjectId here
+       user: user._id, 
        event: eventId,
        quantity: quantity,
        bookingId: `${eventId}-${user._id}`,
-       email: userEmail // Include the user's email here
-       // Use the user's ObjectId here
+       email: userEmail 
      });
  
      await newBooking.save();
-     // Update the event and handle QRCode as needed
   } catch (error) {
      console.error(error);
      res.status(500).send('Server error');
@@ -383,12 +379,12 @@ const userSchema = new mongoose.Schema({
 const bookingSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Assuming you have a User model
+    ref: 'User', 
     required: true
   },
   event: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Image', // Assuming 'Image' is your event model
+    ref: 'Image', 
     required: true
   },
   quantity: {
@@ -400,13 +396,13 @@ const bookingSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  email: { // New field to store the user's email
+  email: { 
      type: String,
      required: true
   }
 });
 
-const Booking = mongoose.model('Booking', bookingSchema); // 'booking' is the collection name
+const Booking = mongoose.model('Booking', bookingSchema); 
 
 app.post('/event-click', async (req, res) => {
   try {
@@ -419,13 +415,10 @@ app.post('/event-click', async (req, res) => {
 });
 
 
-// Define a route for the profile page
 app.get('/profile', async (req, res) => {
   try {
-    // Fetch the events booked by the current user
     const userEmail = req.session.email;
     const bookedEvents = await Booking.find({ email: userEmail }).populate('event');
-    // Render the profile page with the booked events
     res.render('profile', { bookedEvents: bookedEvents });
   } catch (error) {
     console.error(error);
@@ -433,8 +426,6 @@ app.get('/profile', async (req, res) => {
   }
 });
 
-
-// Define Port for Application
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
