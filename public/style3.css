@@ -603,7 +603,14 @@ margin-left: 44px;
 body {
     font-family: Arial, sans-serif;
    }
-   
+   .user-events-prof{
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 0px;
+    justify-content: space-between;
+    margin-left: 77px;
+    margin-right: 77px;
+   }
   
    figure {
     display: grid;

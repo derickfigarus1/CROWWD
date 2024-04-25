@@ -80,8 +80,8 @@
       <div id="myNav" class="overlay">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <div class="overlay-content">
-          <a href="#">Logout</a>
-          <a href="#">About</a>
+          <a href="/">Logout</a>
+          <a href="/profile">Profile</a>
           <a href="/admin">List an event</a>
           <a href="#">Contact</a>
         </div>
@@ -223,6 +223,7 @@
     <p class="copyright-footer">crowwd &copy; 2024 All Rights Reserved </p>
   </footer>
 
+<!--scripts-->
   <script>
     const quantity = document.getElementById('quantity').value;
     const id = document.getElementsByClassName('travel')[0].id;
@@ -253,6 +254,7 @@
     function closePopup() {
       document.getElementById("qrCode").innerHTML = "";
       popup.classList.remove("open-popup");
+      location.reload();
     }
     $(document).ready(function () {
       $('.box').click(function () {

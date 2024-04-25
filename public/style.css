@@ -33,17 +33,20 @@
     text-align: center;
     margin-bottom: 30px;
   }
+#captcha-reg{
+  padding-left: 50px;
+}
 
-
-  .form-container-reg {
+.form-container-reg {
     width: 475px;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 15px;
     background-color: white;
-    height: 650px;
+    height: 775px;
     margin: auto;
     margin-left: 36%;
+    align-items: center;
   }
 
 
@@ -81,6 +84,7 @@
     border-radius: 5px;
     cursor: pointer;
     font-size: 20px;
+    margin-top: 20px;
     
   }
 
@@ -116,6 +120,7 @@
 }
 #no-account{
     color: #c3073f;
+    padding-top: 15px;
 }
 
 .container-login form{
@@ -202,19 +207,30 @@
     z-index: 1000;
 }
 #crowwd{
-    color: #c3073f;    
-    font-family: 'Poppins', sans-serif;
-    font-size: 90px;
+  color: #c3073f;    
+  font-family: 'Poppins', sans-serif;
+  font-size: 90px;
+  padding-top: 280px; 
                 
+}
+#sign-in{
+  padding-bottom: 80px;
+}
+#login-img{
+  width: 110%;
+  padding-top: 100px;
+}
+.g-recaptcha{
+  padding-top: 15px;
 }
 .toggle-login{
     background-color: #333;
+    flex-wrap: wrap;
     height: 100%;
     color: #fff;
     position: relative;
     left: 0; /* Adjusted to make the toggle visible within the toggle-container */
     height: 100%;
-    width: 200%;
     transform: translateX(0);
     display: flex;
     justify-content: center;

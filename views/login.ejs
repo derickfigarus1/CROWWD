@@ -6,26 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="/style.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <title>Login</title>
 
 </head>
 <body class="body-login">
-  <main>
     <div class="container-login" id="container-login">
         <div class="form-container-login sign-in">
             <form action="/login" method="post">
-                <h1>Sign In</h1>
-                <div class="social-icons">
-                    <a href="#" class="icon"><i class="fa-brands fa-instagram"></i></i></a>
-                    <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
-                    <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
-                </div>
+                <h1 id="sign-in">Sign In</h1>
+                
                 <span>use your admin/user email</span>
                 <input type="text" id="email" name="email" placeholder="Enter your email" required autocomplete="off">
                 <input type="password" id="password" name="password" placeholder="password" required>
-                <a href="/register" id="no-account" class="link">Don't have an account?</a>
+                <div class="g-recaptcha" data-sitekey="6LfaecYpAAAAAA5g9g5XwOOGfwlHe98-XC58pZDP
+                "></div>
                 <button type="submit">Sign In</button>
+                <a href="/register" id="no-account" class="link">Don't have an account?</a>
                 <% if (typeof errorMessage !== "undefined") { %>
                   <div class="error-message">
                      <%= errorMessage %>
@@ -35,15 +32,11 @@
         </div>
         <div class="toggle-container-login">
             <div class="toggle-login">
-               
-                <h1 id="crowwd" >crowwd.................</h1>
+                <h1 id="crowwd" >crowwd.</h1>
+                <img src="multicultural-people-crowd-diverse-person-group-vector-34881635.png" alt="" id="login-img">
             </div>
         </div>
-    </div>
-  </main>
-
-    <script src="script.js"></script>
-    
+    </div>    
     
 </body>
 

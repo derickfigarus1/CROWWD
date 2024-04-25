@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=\, initial-scale=1.0">
     <title>Register</title>
     <link rel="stylesheet" href="/style.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
 
 </head>
 <body class="body-register">
@@ -22,6 +24,7 @@
                 <input type="text" id="email" name="email" placeholder="enter you email" required autocomplete="off">
 
             </div>
+            
             <div class="form-group-reg">
                 <label for="password">password :</label>
                 <input type="password" name="password" id="password" placeholder="enter your password" required>
@@ -39,7 +42,9 @@
                     <option value="admin">admin</option>
                  </select>
             </div>
-            <button type="submit"class="submit-btn-reg">signup</button>
+            
+            <div id="captcha-reg" class="g-recaptcha" data-sitekey="6LfaecYpAAAAAA5g9g5XwOOGfwlHe98-XC58pZDP
+            "></div>
             <% if (message) { %>
                 <div class="reg-alert-success" style="    
                 padding-top: 10px;
@@ -49,6 +54,8 @@
                     <%= message %>
                 </div>
             <% } %>
+            <button type="submit"class="submit-btn-reg">signup</button>
+            
             <p id="backtologin">already have an account? <a class="link-reg" href="/">login</a></p>
 
         </form>
