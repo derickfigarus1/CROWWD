@@ -85,6 +85,8 @@
             <br>
             <h3>Total Tickets Available</h3>
             <input type="number" name="totalTickets" placeholder="Enter total tickets available" id="quantity" pattern="[0-9]+">
+            <h3>Ticket price</h3>
+            <input type="number" name="ticketPrice" placeholder="ticket price in INR" id="price" pattern="[0-9]+">
 
 
             <h3>Event venue</h3>
@@ -95,7 +97,7 @@
            <input type="text" name="textbox8" placeholder="eg:- aluva railway station"><br>
            <h3>Nearest airport</h3>
            <input type="text" name="textbox9" placeholder="eg:- CIAL"><br>
-           <!-- Add more text boxes as needed -->
+           
            <h3>Upload images of the event</h3>
            <input type="file" name="imageUploader">
             <br>
@@ -157,18 +159,15 @@
                 }
             }
     
-            // Check if totalTickets is a valid number
             var totalTicketsValue = parseInt(document.getElementsByName('totalTickets')[0].value);
             if (isNaN(totalTicketsValue)) {
                 isValid = false;
                 alert('Please enter a valid number for Total Tickets.');
             }
     
-            // Submit the form if all validations pass
             if (isValid) {
                 this.submit();
             } else {
-                // Display an error message if any validation fails
                 alert('Please fill in all required fields and ensure Total Tickets is a valid number.');
             }
         });

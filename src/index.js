@@ -3,8 +3,6 @@ const session = require('express-session');
 const path = require("path");
 const collection = require("./config");
 const bcrypt = require('bcrypt');
-const nodemailer = require('nodemailer');
-const otpGenerator = require('otp-generator');
 const multer = require('multer');
 const mongoose = require('mongoose');
 const crypto = require('crypto');
@@ -30,7 +28,6 @@ mongoose.connect(process.env.MONGO_URI, )
   .catch(err => console.error("Database Connection Error: ", err));
 
 
-//cloudinary used for storing image in cloud
 const cloudinary = require('cloudinary').v2;
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -38,11 +35,10 @@ cloudinary.config({
   api_secret: process.env.API_SECRET
 });
 
-//multer library used for image storing middleware
 const upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, path.join(__dirname, '../public/uploads/')); // Destination folder
+      cb(null, path.join(__dirname, '../public/uploads/')); 
     },
     filename: function (req, file, cb) {
       cb(null, file.originalname);
@@ -50,7 +46,6 @@ const upload = multer({
   })
 });
 
-//session used for collecting email of loggedin user
 app.use(session({
   cookie: { maxAge: 60000000 },
   secret: process.env.SESSION_SECRET || 'crowwd123',
@@ -58,14 +53,12 @@ app.use(session({
   saveUninitialized: false
 }));
 
-//function for session time
 function ensureAuthenticated(req, res, next) {
   if (req.session && req.session.email) {
      return next(); 
   }
   res.redirect('/');
  }
-
 
 
 app.get("/", (req, res) => {
@@ -75,8 +68,6 @@ app.get("/register", (req, res) => {
   res.render("register", { message: "" });
 });
 
-
-//register page
 app.post("/register", async (req, res) => {
   try {
     const data = {
@@ -94,26 +85,16 @@ app.post("/register", async (req, res) => {
       res.render("register", { message: 'Password must contain at least 8 characters, including at least one uppercase letter, one lowercase letter, one number, and one special character.' });
       return;
     }
-    // const OTP = await sendOTP(data.email);
-    // req.session.otp = OTP; // Store OTP in session
     const recaptchaResponse = req.body['g-recaptcha-response'];
-    const secretKey = '6LfaecYpAAAAAJhL0beZp0bundCEVMi8Lg1awPie'; // Replace with your actual secret key
+    const secretKey = '6LfaecYpAAAAAJhL0beZp0bundCEVMi8Lg1awPie'; 
     const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaResponse}`;
     const result = await axios.post(verificationUrl);
     const captchaData = result.data;
 
     if (!captchaData.success) {
       res.render('register', { message: 'reCAPTCHA validation failed. Please try again.' });
-      return; // Stop execution
+      return;
     }
-    //if (data.otp !== req.session.otp) {
-    //res.render('register', { message: 'Invalid OTP. Please enter the correct OTP.' });
-    //   return;
-    // }
- 
- 
-    //  res.render("register", { message: '', showOTPField: true });
-    // delete req.session.otp;
     const existingUser = await collection.findOne({ email: data.email });
     if (existingUser) {
       res.render("register", { message: 'User already exists.' });
@@ -134,7 +115,6 @@ app.post("/register", async (req, res) => {
   }
 });
 
-// Login user 
 app.post("/login", async (req, res) => {
   try {
     const check = await collection.findOne({ email: req.body.email });
@@ -151,14 +131,13 @@ app.post("/login", async (req, res) => {
     const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaResponse}`;
     const result = await axios.post(verificationUrl);
     const data = result.data;    
-    const userEmail = req.session.email; // Get the current session's email
-    const events = await Image.find({ email: userEmail }); // Fetch events by email
+    const userEmail = req.session.email;
+    const events = await Image.find({ email: userEmail }); 
     const images = await Image.find({}, { imagePath: 1, _id: 0 });
     const rankedEvents = await getRankedEvents();
     req.session.email = check.email;
-    req.session.name = check.name; // Set the user's name in the session
+    req.session.name = check.name;
     if (!data.success) {
-      // If reCAPTCHA validation fails, return an error message
       return res.render('login', { errorMessage: 'validation failed. Please try again.' });
     }
     if (check.user_type === 'admin') {
@@ -218,20 +197,15 @@ async function getRankedEvents() {
 }
 app.get('/home', ensureAuthenticated, async (req, res) => {
   try {
-    // Fetch any data you need to render the home view
     const userEmail = req.session.email;
-    const rankedEvents = await getRankedEvents(); // Fetch ranked events
-    const images = await Image.find({}, { imagePath: 1, _id: 0 }); // Fetch images
-
-    // Render the home view and pass any necessary data
+    const rankedEvents = await getRankedEvents();
+    const images = await Image.find({}, { imagePath: 1, _id: 0 }); 
     res.render('home', { name: req.session.name, rankedEvents: rankedEvents, images: images });
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
   }
 });
-
-//Admin page
 const imageSchema = new mongoose.Schema({
   email: String,
   textbox1: String,
@@ -254,9 +228,12 @@ const imageSchema = new mongoose.Schema({
   clicks: {
     type: Number,
     default: 0 
+  },
+  ticketPrice: {
+    type: Number,
+    required: true
   }
 });
-// Create a model from the schema
 const Image = mongoose.model('Image', imageSchema);
 app.post('/submit', upload.single('imageUploader'), async (req, res) => {
   try {
@@ -274,6 +251,10 @@ app.post('/submit', upload.single('imageUploader'), async (req, res) => {
     if (isNaN(totalTickets)) {
       totalTickets = 0; 
     }
+    let ticketPrice = parseInt(req.body.ticketPrice, 10);
+    if (isNaN(ticketPrice)) {
+      ticketPrice = 0; 
+    }
     const image = new Image({
       email: userEmail,
       textbox1: req.body.textbox1,
@@ -289,10 +270,10 @@ app.post('/submit', upload.single('imageUploader'), async (req, res) => {
       dropdown1: req.body.dropdown1,
       dropdown2: req.body.dropdown2,
       imagePath: imagePath,
-      totalTickets: totalTickets 
+      totalTickets: totalTickets,
+      ticketPrice: ticketPrice
     });
     await image.save();
-  
     const newTicket = new Ticket({
       eventId: image._id,
       totalTickets: req.body.totalTickets
@@ -324,7 +305,6 @@ app.get('/admin', ensureAuthenticated, async (req, res) => {
   res.locals.messages = req.flash();
   res.render('admin', { name: name, events: events }); 
 });
-//searching for events that match date and location selected
 app.post('/search-events-by-date-and-location', async (req, res) => {
   const { fromDate, toDate, location } = req.body;
   const from = new Date(fromDate);
@@ -335,7 +315,7 @@ app.post('/search-events-by-date-and-location', async (req, res) => {
   });
   res.render('events', { events: events });
 });
-//searching the database for texts
+
 app.post('/search-events', async (req, res) => {
   const searchQuery = req.body.searchQuery;
   const events = await Image.find({
@@ -360,7 +340,6 @@ app.get('/event/:id', ensureAuthenticated, async (req, res) => {
     if (!event) {
       return res.status(404).send('Event not found');
     }
-    // Fetch similar events
     const similarEvents = await Image.find({
       dropdown1: event.dropdown1,
       _id: { $ne: eventId } // Exclude the current event
@@ -370,58 +349,6 @@ app.get('/event/:id', ensureAuthenticated, async (req, res) => {
     console.error(error);
   }
 });
-
-app.post('/book-event/:id', async (req, res) => {
-  try {
-     const eventId = req.params.id;
-     const quantity = parseInt(req.body.quantity, 10);
-     const event = await Image.findById(eventId);
-     console.log(req.session.email)
-     const userEmail = req.session.email; 
-     console.log('Email from session:', userEmail);
-     const user = await User.findOne({ email: userEmail });
-     console.log('User found:', user);
-
-     
-     if (event.totalTickets < quantity) {
-      res.render("event-details", { message1: 'Soldout' });
-    }else{
-      if (isNaN(quantity) || quantity <= 0) {
-        return res.status(400).send('Invalid quantity.');
-      }else{
-       if (quantity > 10) {
-         res.render("event-details", { message1: 'book up to 10 tickets please' });
-       }
-      }
-    }
-     
- 
-     if (!event) {
-       return res.status(404).send('Event not found');
-     }
-    
-     event.totalTickets -= quantity;
-     await event.save();
-   
-
-     if (!user) {
-       return res.status(404).send('User not found');
-     }
- 
-     const newBooking = new Booking({
-       user: user._id, 
-       event: eventId,
-       quantity: quantity,
-       bookingId: `${eventId}-${user._id}`,
-       email: userEmail 
-     });
- 
-     await newBooking.save();
-  } catch (error) {
-     console.error(error);
-     res.status(500).send('Server error');
-  }
- });
  
 
 app.get('/filter-events', ensureAuthenticated, async (req, res) => {
@@ -523,7 +450,76 @@ app.get('/profile', ensureAuthenticated, async (req, res) => {
   }
 });
 
+async function updateTicketAvailability(eventId, quantity) {
+  // Find the event by its ID
+  const event = await Event.findById(eventId);
+  if (!event) {
+      throw new Error('Event not found');
+  }
+
+  // Update the ticketsAvailable field
+  event.ticketsAvailable -= quantity;
+
+  // Save the updated event
+  await event.save();
+}
+
+// Assuming you have a function to confirm the booking
+async function confirmBooking(userId, eventId, quantity) {
+  // This could involve sending an email or storing booking information
+  console.log(`Confirmed booking for ${quantity} tickets for user ${userId} for event ${eventId}`);
+}
+
+
+app.get('/book-event/:id', async (req, res) => {
+  const eventId = req.params.id;
+  const event = await Image.findById(eventId);
+  if (!event) {
+      return res.status(404).send('Event not found');
+  }
+  res.render('booking', { event: event });
+});
+app.post('/book-event/:id', async (req, res) => {
+  try {
+    console.log('Request Params:', req.params); // Debugging line
+
+     const eventId = req.params.id;
+     console.log(`Attempting to book event with ID: ${eventId}`);
+
+     const event = await Image.findById(eventId);
+     console.log(`Event found:`, event);
+
+     console.log(req.session.email)
+     const userEmail = req.session.email; 
+     console.log('Email from session:', userEmail);
+     const user = await User.findOne({ email: userEmail });
+     console.log('User found:', user)
+     if (!event) {
+       return res.status(404).send('Event not found');
+     }
+     console.log(`Rendering booking page for event:`, event);
+     res.render('booking', { event: event });
+     if (!user) {
+       return res.status(404).send('User not found');
+     }
+   } catch (error) {
+     console.error(error);
+     res.status(500).send('Server error');
+  }
+ });
+
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
+
+
+
+    // }else{
+    //   if(isNaN(quantity) || quantity <= 0) {
+    //     return res.status(400).send('Invalid quantity.');
+    //   }else{
+    //    if (quantity > 10) {
+    //      res.render("event-details", { message1: 'book up to 10 tickets please' });
+    //    }
+    //   }

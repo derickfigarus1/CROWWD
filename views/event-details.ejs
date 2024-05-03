@@ -124,7 +124,7 @@
       <h3>Travel</h3>
       <br>
 
-      <div class="travel" id="<%= event._id%>">
+      <div class="travel" id="<%= event._id%>"> 
         <div class="icon-container">
           <i class="fa-solid fa-bus fa-2x me-2" id="icons-event-details"></i>
           <p id="travel-event-details">
@@ -149,31 +149,12 @@
 
       <h5 id="event-desc"> Tickets available : <%= event.totalTickets %>
       </h5>
-
-      <form id="bookEventForm" action="/book-event/<%= event._id %>" method="post">
-        <div class="d-flex align-items-left">
-
-          <input type="number" class="form-control text-center" value="1" id="quantity" name="quantity">
-        </div>
-        <input type="hidden" name="eventId" value="<%= event._id %>">
-
-        <button class="btn btn-success mt-3" type="submit" onclick="openPopup()">Book Now</button>
-        <div class="popup" id="popup">
-          <h2>Thank You</h2>
-          <p>Event Booked </p>
-          <button type="button" id="popup-button" onclick="closePopup()">OK</button>
-          <div id="qrCode" style="display:none"></div>
-        </div>
-      </form>
-
+      <a href="/book-event/<%= event._id %>" class="btn btn-success mt-3">Book Now</a>
     </div>
 
   </div>
   <br>
   <br>
-
-
-  <!-- Similar Events Section -->
   <div class="similar-events">
     <h2 id="trending">Similar Events</h2>
     <div class="row">
@@ -225,28 +206,6 @@
 
 <!--scripts-->
   <script>
-    const quantity = document.getElementById('quantity').value;
-    const id = document.getElementsByClassName('travel')[0].id;
-    const uniqueId = `${id}@${quantity}`
-    const encodedUniqueId = encodeURIComponent(uniqueId);
-    const qrcode = new QRCode(document.getElementById("qrCode"), {
-      text: encodedUniqueId,
-      width: 256,
-      height: 256,
-      colorDark: "#000000",
-      colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.M
-    })
-    document.getElementById("qrCode").style.display = "block"
-    document.getElementById('bookEventForm').addEventListener('submit', function (event) {
-      var quantityInput = document.getElementById('quantity');
-      var quantityValue = parseInt(quantityInput.value, 10);
-
-      if (isNaN(quantityValue) || quantityValue <= 0) {
-        alert('Please enter a valid quantity.');
-        event.preventDefault(); 
-      }
-    });
     let popup = document.getElementById("popup");
     function openPopup() {
       popup.classList.add("open-popup");
