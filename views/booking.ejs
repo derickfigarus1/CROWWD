@@ -107,8 +107,8 @@
           <div class="qty-input">
             <div class="three-elements">
               <button class="qty-count qty-count--minus" data-action="minus" type="button">-</button>
-              <input class="product-qty" type="number" name="product-qty" min="0" max="5" value="1">
-              <button class="qty-count qty-count--add" data-action="add" type="button">+</button>
+              <input class="product-qty" type="number" name="product-qty" min="1" max="5" value="0">
+              <button class="qty-count qty-count--add" data-action="add" type="button" id="increase">+</button>
 
             </div>
           </div>
@@ -118,7 +118,7 @@
           </div>
         </div>
       </div>
-      <button type="submit" value="book tickets" class="submit-btn" id="rzp-button1">Pay &#8377; <%= event.ticketPrice %></button>
+      <button type="submit" value="book tickets" class="submit-btn" id="rzp-button1">Pay</button>
     </form>
   </div>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -129,6 +129,9 @@
   </script>
   
   <script>
+
+
+
     document.getElementById('rzp-button1').onclick = async function (e) {
   e.preventDefault();
 
@@ -182,7 +185,7 @@
                 fullName: fullName,
                 aadharNumber: aadharNumber,
                 eventId: '<%= eventId %>',
-                amount: formattedAmount,
+                amount: totalAmount,
                 quantity: quantity,
               })
             }).catch(error => console.error('Fetch error:', error));
@@ -201,6 +204,20 @@
     }
   }
 }
+
+
+
+
+    const totalTicketsElement = '<%= event.totalTickets %>';
+    if (totalTicketsElement < 5) {
+    document.querySelector('.product-qty').setAttribute('max', totalTicketsElement);
+  } else {
+    document.querySelector('.product-qty').setAttribute('max', 5);
+  }
+  
+
+
+
 
     var QtyInput = (function () {
       var $qtyInputs = $(".qty-input");
@@ -286,6 +303,9 @@
       // If all checks pass, allow form submission
       return true;
     }
+
+    
+
 
 
   </script>

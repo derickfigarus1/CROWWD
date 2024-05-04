@@ -418,19 +418,7 @@ app.get('/profile', ensureAuthenticated, async (req, res) => {
   }
 });
 
-async function updateTicketAvailability(eventId, quantity) {
-  // Find the event by its ID
-  const event = await Event.findById(eventId);
-  if (!event) {
-      throw new Error('Event not found');
-  }
 
-  // Update the ticketsAvailable field
-  event.ticketsAvailable -= quantity;
-
-  // Save the updated event
-  await event.save();
-}
 
 // Assuming you have a function to confirm the booking
 async function confirmBooking(userId, eventId, quantity) {
@@ -539,6 +527,14 @@ app.post("/saveBooking", async (req, res) => {
     });
 
     await booking.save();
+
+    const event = await Image.findById(eventId);
+    if (event) {
+      event.totalTickets -= quantity;
+      await event.save();
+    } else {
+      console.error('Event not found');
+    }
 
     res.status(201).json({
       success: true,
