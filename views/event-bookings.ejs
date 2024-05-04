@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<ul>
+    <% bookings.forEach(function(booking) { %>
+        <li>
+      <strong>Name:</strong> <%= booking.fullName %><br>
+      <strong>Aadhar Number:</strong> <%= booking.aadharNumber %><br>
+      <strong>Quantity:</strong> <%= booking.quantity %><br>
+    </li>
+  <% }); %>
+</ul>
+
+</body>
+</html>

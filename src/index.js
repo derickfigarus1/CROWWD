@@ -9,6 +9,7 @@ const axios = require('axios');
 const app = express();
 const dotenv = require("dotenv");
 const cookieParser = require('cookie-parser');
+const multer = require('multer');
 const flash = require('connect-flash');
 require('dotenv').config({ path: './src/.env' });
 app.use(flash());
@@ -53,6 +54,16 @@ function ensureAuthenticated(req, res, next) {
   }
   res.redirect('/');
  }
+ const upload = multer({ 
+  storage: multer.diskStorage({
+      destination: function (req, file, cb) {
+          cb(null, path.join(__dirname, '../public/uploads/')); // Destination folder
+      },
+      filename: function (req, file, cb) {
+          cb(null, file.originalname); 
+      }
+  })
+});
 
 
 app.get("/", (req, res) => {
@@ -126,7 +137,7 @@ app.post("/login", async (req, res) => {
     const result = await axios.post(verificationUrl);
     const data = result.data;    
     const userEmail = req.session.email;
-    const events = await Image.find({ email: userEmail }); 
+    const events = await Image.find({ email: userEmail,email: { $exists: true } }); 
     const images = await Image.find({}, { imagePath: 1, _id: 0 });
     const rankedEvents = await getRankedEvents();
     req.session.email = check.email;
@@ -229,13 +240,15 @@ const imageSchema = new mongoose.Schema({
   }
 });
 const Image = mongoose.model('Image', imageSchema);
-app.post('/submit',async (req, res) => {
+app.post('/submit', upload.single('imageUploader'), async (req, res) => {
   try {
     // Upload the image to Cloudinary
     const result = await cloudinary.uploader.upload(req.file.path);
     const imagePath = result.secure_url;
     const userEmail = req.session.email;
     const events = await Image.find({ email: userEmail });
+    const name = req.session.name || 'Guest';
+    res.render('admin', { name: name, events: events }); 
     const date = new Date(req.body.datePicker);
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -295,7 +308,7 @@ const Ticket = mongoose.model('Ticket', ticketSchema)
 app.get('/admin', ensureAuthenticated, async (req, res) => {
   const name = req.session.name || 'Guest';
   const userEmail = req.session.email; // Get the current session's email
-  const events = await Image.find({ email: userEmail }); // Fetch events by email
+  const events = await Image.find({ email: userEmail,email: { $exists: true } }); // Fetch events by email
   res.locals.messages = req.flash();
   res.render('admin', { name: name, events: events }); 
 });
@@ -325,6 +338,7 @@ app.post('/search-events', async (req, res) => {
   res.render('events', { events: events });
 });
 
+
 app.get('/event/:id', ensureAuthenticated, async (req, res) => {
   try {
     const eventId = req.params.id;
@@ -343,6 +357,26 @@ app.get('/event/:id', ensureAuthenticated, async (req, res) => {
     console.error(error);
   }
 });
+// In your Express.js server file (e.g., index.js)
+
+app.get('/bookings/:eventId', ensureAuthenticated, async (req, res) => {
+  try {
+    const eventId = req.params.eventId;
+    const bookings = await Booking.find({ eventId: eventId });
+    // Check if bookings is an array and not null
+    if (!Array.isArray(bookings) || bookings.length === 0) {
+      // Handle the case where no bookings are found
+      // You might want to redirect to a different page or render a message
+      return res.render('no-bookings-found', { eventId: eventId });
+    }    res.render('event-bookings', { bookings: bookings });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+});
+
+
+
  
 
 app.get('/filter-events', ensureAuthenticated, async (req, res) => {
@@ -420,11 +454,7 @@ app.get('/profile', ensureAuthenticated, async (req, res) => {
 
 
 
-// Assuming you have a function to confirm the booking
-async function confirmBooking(userId, eventId, quantity) {
-  // This could involve sending an email or storing booking information
-  console.log(`Confirmed booking for ${quantity} tickets for user ${userId} for event ${eventId}`);
-}
+// Assuming you have a function to confirm the bookin
 app.get('/logout', (req, res) => {
   // Destroy the session
   req.session.destroy((err) => {
