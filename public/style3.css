@@ -1,4 +1,4 @@
-
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap');
 
 /* Global styles */
@@ -654,4 +654,186 @@ body {
     }
   }
   
- 
+
+  
+  .container-booking{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding:25px;
+    min-height: 100vh;
+    background: white;
+    transition: all .2s linear;
+    font-family: 'Poppins', sans-serif;
+
+  }
+  
+  .container-booking form{
+    padding:20px;
+    width:700px;
+    background: #fff;
+    box-shadow: 0 5px 10px rgba(0,0,0,.1);
+    border: 3px solid transparent; /* Set border width and make it transparent */
+    border-image: linear-gradient(to right, #ff8a00, #e52e71) 1; /* Set gradient */
+    border-image-slice: 1; /* Ensure gradient covers entire border */
+    border-radius: 15px; 
+  }
+  
+  .container-booking form .row{
+    display: flex;
+    flex-wrap: wrap;
+    gap:15px;
+  }
+  
+  .container-booking form .row .col{
+    flex:1 1 250px;
+  }
+  
+  .container-booking form .row .col .title{
+    font-size: 20px;
+    color:#333;
+    padding-bottom: 5px;
+    text-transform: uppercase;
+  }
+  
+  .container-booking form .row .col .inputBox{
+    margin:15px 0;
+  }
+  
+  .container-booking form .row .col .inputBox span{
+    margin-bottom: 10px;
+    display: block;
+  }
+  
+  .container-booking form .row .col .inputBox input{
+    width: 100%;
+    border:1px solid #ccc;
+    padding:10px 15px;
+    font-size: 15px;
+    text-transform: none;
+  }
+  
+  .container-booking form .row .col .inputBox input:focus{
+    border:1px solid #000;
+  }
+  
+  .container-booking form .row .col .flex{
+    display: flex;
+    gap:15px;
+  }
+  
+  .container-booking form .row .col .flex .inputBox{
+    margin-top: 5px;
+  }
+  
+  
+  
+  .container-booking form .submit-btn{
+    width: 100%;
+    padding:12px;
+    font-size: 17px;
+    background: #d60040;
+    color:#fff;
+    margin-top: 15px;
+    cursor: pointer;
+    border-radius: 15px;
+    border-color: #d60040;
+  }
+  
+  .container-booking form .submit-btn:hover{
+    background: #8d002a;
+  }
+  
+  
+  .qty-input {
+      color: #d60040;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+  
+      .product-qty,
+      .qty-count {
+          background: transparent;
+          color: black;
+          font-weight: bold;
+          font-size: inherit;
+          border: none;
+          display: inline-block;
+          min-width: 0;
+          height: 2.5rem;
+          line-height: 1;
+          
+  
+          &:focus {
+              outline: none;
+          }
+      }
+      .product-qty {
+          width: 50px;
+          min-width: 0;
+          display: inline-block;
+          text-align: center;
+  
+          appearance: textfield;		
+          
+          &::-webkit-outer-spin-button,
+          &::-webkit-inner-spin-button {
+              appearance: none;
+              margin: 0;
+          }
+      }
+  
+      .qty-count {
+          padding: 0;
+          cursor: pointer;
+          width: 2.5rem;
+          font-size: 1.25em;
+          text-indent: -100px;
+          overflow: hidden;
+          position: relative;
+          
+          &:before, 
+          &:after {
+              content: "";
+              height: 2px;
+              width: 10px;
+              position: absolute;
+              display: block;
+              background: #000;
+              top: 0;
+              bottom: 0;
+              left: 0;
+              right: 0;
+              margin: auto;
+          }
+          &--minus {
+              border-right: 1px solid #e2e2e2;
+          }
+          &--add {
+              border-left: 1px solid #e2e2e2;
+              &:after {
+                  transform: rotate(90deg);
+              }
+          }
+          
+          &:disabled {
+              color: #ccc;
+              background: #f2f2f2;
+              cursor: not-allowed;
+              border-color: transparent;
+              
+  
+              }
+          }
+      }
+  
+  .three-elements{
+      background-color: #ff8a00;
+      border-radius: 7px;
+  }
+  #result{
+      padding-top: 9px;
+  }
+  
+  

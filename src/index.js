@@ -3,7 +3,6 @@ const session = require('express-session');
 const path = require("path");
 const collection = require("./config");
 const bcrypt = require('bcrypt');
-const multer = require('multer');
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 const axios = require('axios'); 
@@ -20,12 +19,18 @@ app.set("view engine", "ejs");
 app.use(cookieParser('secret'));
 const Recaptcha = require('express-recaptcha').RecaptchaV2;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+const Razorpay = require("razorpay");
+const cors= require("cors");
+app.use(cors());
+
+
+
 
 
 mongoose.connect(process.env.MONGO_URI, )
   .then(() => console.log("mongoDB is connected"))
   .then(() => console.log("Database Connected Successfully"))
-  .catch(err => console.error("Database Connection Error: ", err));
+  .catch(err => console.error("Database Connection Error: ", err))
 
 
 const cloudinary = require('cloudinary').v2;
@@ -33,17 +38,6 @@ cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.API_KEY,
   api_secret: process.env.API_SECRET
-});
-
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, path.join(__dirname, '../public/uploads/')); 
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname);
-    }
-  })
 });
 
 app.use(session({
@@ -203,7 +197,7 @@ app.get('/home', ensureAuthenticated, async (req, res) => {
     res.render('home', { name: req.session.name, rankedEvents: rankedEvents, images: images });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Server error');
+    res.status(500).send('Server error')
   }
 });
 const imageSchema = new mongoose.Schema({
@@ -235,7 +229,7 @@ const imageSchema = new mongoose.Schema({
   }
 });
 const Image = mongoose.model('Image', imageSchema);
-app.post('/submit', upload.single('imageUploader'), async (req, res) => {
+app.post('/submit',async (req, res) => {
   try {
     // Upload the image to Cloudinary
     const result = await cloudinary.uploader.upload(req.file.path);
@@ -279,7 +273,7 @@ app.post('/submit', upload.single('imageUploader'), async (req, res) => {
       totalTickets: req.body.totalTickets
     });
     await newTicket.save();
-    req.flash('message', 'Event registered successfully.');
+    req.flash('message', 'Event registered successfully.')
     res.redirect('/admin');
   } catch (error) {
     console.error(error);
@@ -296,7 +290,7 @@ const ticketSchema = new mongoose.Schema({
     required: true
   }
 });
-const Ticket = mongoose.model('Ticket', ticketSchema);
+const Ticket = mongoose.model('Ticket', ticketSchema)
 
 app.get('/admin', ensureAuthenticated, async (req, res) => {
   const name = req.session.name || 'Guest';
@@ -374,33 +368,7 @@ const userSchema = new mongoose.Schema({
  });
  
  const User = mongoose.model('User', userSchema);
-const bookingSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', 
-    required: true
-  },
-  event: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Image', 
-    required: true
-  },
-  quantity: {
-    type: Number,
-    required: true
-  },
-  bookingId: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  email: { 
-     type: String,
-     required: true
-  }
-});
 
-const Booking = mongoose.model('Booking', bookingSchema); 
 
 app.post('/event-click', async (req, res) => {
   try {
@@ -469,26 +437,32 @@ async function confirmBooking(userId, eventId, quantity) {
   // This could involve sending an email or storing booking information
   console.log(`Confirmed booking for ${quantity} tickets for user ${userId} for event ${eventId}`);
 }
+app.get('/logout', (req, res) => {
+  // Destroy the session
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error destroying session:', err);
+      return res.status(500).send('Error logging out');
+    }
+    // Redirect the user to the login page after logout
+    res.redirect('/');
+  });
+});
 
 
 app.get('/book-event/:id', async (req, res) => {
   const eventId = req.params.id;
   const event = await Image.findById(eventId);
   if (!event) {
-      return res.status(404).send('Event not found');
+      return res.status(404).send('Event not found')
   }
-  res.render('booking', { event: event });
+  res.render('booking', { event: event, eventId: eventId });
 });
-app.post('/book-event/:id', async (req, res) => {
+app.post('/book-event/id', async (req, res) => {
   try {
-    console.log('Request Params:', req.params); // Debugging line
 
-     const eventId = req.params.id;
-     console.log(`Attempting to book event with ID: ${eventId}`);
-
-     const event = await Image.findById(eventId);
-     console.log(`Event found:`, event);
-
+     let eventId = req.params.id;
+     const event = await Image.findById(eventId) 
      console.log(req.session.email)
      const userEmail = req.session.email; 
      console.log('Email from session:', userEmail);
@@ -507,19 +481,90 @@ app.post('/book-event/:id', async (req, res) => {
      res.status(500).send('Server error');
   }
  });
+ const BookingSchema = new mongoose.Schema({
+  bookingId: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true },
+  fullName: String,
+  aadharNumber: String,
+  eventId: String,
+  amount: Number,
+  orderId: String,
+  quantity: Number, // Store the quantity
+  userEmail: String, // Add this line to include the user's email
+
+});
+const Booking = mongoose.model('Booking', BookingSchema);
+
+app.post("/payment", async (req, res) => {
+  try {
+    const { fullName, aadharNumber, eventId, amount, quantity } = req.body;
+
+    var instance = new Razorpay({
+      key_id: process.env.RAZORPAY_ID_KEY,
+      key_secret: process.env.RAZORPAY_SECRET_KEY
+    });
+    let order = await instance.orders.create({
+      amount: amount,
+      currency: "INR",
+      receipt: "receipt#1"
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Payment order created successfully',
+      order:order
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: 'An error occurred while creating the payment order.' });
+  }
+});
+app.post("/saveBooking", async (req, res) => {
+  try {
+    const { fullName, aadharNumber, eventId, amount, quantity } = req.body;
+    const bookingId = new mongoose.Types.ObjectId(); // This now correctly generates a new ObjectId
+
+    // Correctly assign userEmail from req.session
+    const userEmail = req.session.email;  // Retrieve the user's email from the session
+
+    // Assuming you have a Booking model defined
+    const booking = new Booking({
+      bookingId,
+      fullName,
+      aadharNumber,
+      eventId,
+      amount,
+      orderId: req.body.orderId, // Assuming the order ID is passed in the request body
+      quantity,
+      userEmail
+    });
+
+    await booking.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Booking saved successfully',
+      booking
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: 'An error occurred while saving the booking.' });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
-
-
-
-    // }else{
-    //   if(isNaN(quantity) || quantity <= 0) {
-    //     return res.status(400).send('Invalid quantity.');
-    //   }else{
-    //    if (quantity > 10) {
-    //      res.render("event-details", { message1: 'book up to 10 tickets please' });
-    //    }
-    //   }
