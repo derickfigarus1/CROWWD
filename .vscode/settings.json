@@ -7,5 +7,6 @@
         "resave",
         "Soldout",
         "textbox"
-    ]
+    ],
+    "liveServer.settings.port": 5501
 }

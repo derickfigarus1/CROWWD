@@ -1,101 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>User Profile</title>
- <link rel="stylesheet" href="/style3.css">
- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
- <script src="https://kit.fontawesome.com/your-fontawesome-kit-code.js" crossorigin="anonymous"></script>
- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  <title>
+Profile  </title>
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+  <!-- Nucleo Icons -->
+  <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- Font Awesome Icons -->
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <!-- CSS Files -->
+  <link id="pagestyle" href="/assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+  <!-- Nepcha Analytics (nepcha.com) -->
+  <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
+  <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
 </head>
-<body>
-      <header class="container-fluid d-flex justify-content-start align-items-center py-4">
-            <div class="d-flex align-items-center me-auto ">
-                <a href="#" class="text-decoration-none d-flex align-items-center">
-                  <h1 class="me-5">crowwd</h1>
-                </a>
-                <form class="d-flex me-3" action="/search-events" method="POST" >
-                  <input class="form-control me-2" type="search" placeholder="Search for events,locations.." aria-label="Search" id="searchInput" name="searchQuery">
-                  <button class="btn btn-outline-success " type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-                </form>
-             </div>
-             <div class="me-4 ms-lg-auto ms-lg-5 justify-content-lg-start">
-                <form class="d-none d-lg-flex me-lg-5 ms-lg-auto" action="/search-events-by-date-and-location" method="POST">
-                    <div class="input-group">
-                        <label id="date-header" for="from-date" class="me-2">From :</label>
-                <input type="date" class="form-control me-2" id="from-date" name="fromDate">
-                <label id="date-header" for="to-date" class="me-2">To :</label>
-                <input type="date" class="form-control me-2" id="to-date" name="toDate">
-                <label id="date-header" for="select-location" class="me-2">Select location </label>
-                <select id="to-date" class="form-select me-2" name="location" id="cities">
-                  <option value="Alappuzha">Alappuzha</option>
-                  <option value="Thrissur">Thrissur</option>
-                  <option value="Palakkad">Palakkad</option>
-                  <option value="Malappuram">Malappuram</option>
-                  <option value="Manjeri">Manjeri</option>
-                  <option value="Thalassery">Thalassery</option>
-                  <option value="Kannur">Kannur</option>
-                  <option value="Kasaragod">Kasaragod</option>
-                  <option value="Kollam">Kollam</option>
-                  <option value="Neyyattinkara">Neyyattinkara</option>
-                  <option value="Kottayam">Kottayam</option>
-                  <option value="Pala">Pala</option>
-                  <option value="Aluva">Aluva</option>
-                  <option value="Angamaly">Angamaly</option>
-                  <option value="Thodupuzha">Thodupuzha</option>
-                  <option value="Muvattupuzha">Muvattupuzha</option>
-                  <option value="Perumbavoor">Perumbavoor</option>
-                  <option value="Kothamangalam">Kothamangalam</option>
-                  <option value="Vaikom">Vaikom</option>
-                  <option value="Cherthala">Cherthala</option>
-                  <option value="Changanassery">Changanassery</option>
-                  <option value="Kozhencherry">Kozhencherry</option>
-                  <option value="Adoor">Adoor</option>
-                  <option value="Pathanamthitta">Pathanamthitta</option>
-                  <option value="Pandalam">Pandalam</option>
-                  <option value="Kayamkulam">Kayamkulam</option>
-                  <option value="Mavelikkara">Mavelikkara</option>
-                  <option value="Chengannur">Chengannur</option>
-                  <option value="Thiruvalla">Thiruvalla</option>
-                  <option value="Punalur">Punalur</option>
-                  <option value="Paravur">Paravur</option>
-                  <option value="Kochi">Kochi</option>
-                  <option value="Kozhikode">Kozhikode</option>
-                  <option value="Thiruvananthapuram">Thiruvananthapuram</option>
-                  <option value="Kollam">Kollam</option>
-                </select>
+
+<body class="g-sidenav-show bg-gray-200">
+  
+  <div class="main-content position-relative max-height-vh-100 h-100">
+    <!-- Navbar -->
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
+      <div class="container-fluid py-1 px-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Profile</li>
+          </ol>
+          <h6 class="font-weight-bolder mb-0">Profile</h6>
+        </nav>
+        <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+          <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+           
+          </div>
+          <ul class="navbar-nav  justify-content-end">
+              <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
+                <li class="mb-2">
+                  <a class="dropdown-item border-radius-md" href="javascript:;">
+                    <div class="d-flex py-1">
+                    </div>
+                  </a>
+                </li>
+            
+              </ul>
+            </li>
+            <li class="nav-item d-flex align-items-center">
+              <a href="../pages/sign-in.html" class="nav-link text-body font-weight-bold px-0">
+                <i class="fa fa-user me-sm-1"></i>
+                <span class="d-sm-inline d-none">Sign In</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="container-fluid px-2 px-md-4">
+      <div class="page-header min-height-300 border-radius-xl mt-4" style="background-image: url('https://images.unsplash.com/photo-1531512073830-ba890ca4eba2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');">
+        <span class="mask  bg-gradient-primary  opacity-6"></span>
+      </div>
+      <div class="card card-body mx-3 mx-md-4 mt-n6">
+        <div class="row gx-4 mb-2">
+          <div class="col-auto">
+            <div class="avatar avatar-xl position-relative">
+              <img src="../assets/img/bruce-mars.jpg" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
             </div>
-                <button class="btn btn-outline-success" type="submit" id="go">Go</button>
-                </form>
+          </div>
+          <div class="col-auto my-auto">
+            <div class="h-100">
+              <h5 class="mb-1">
+                <%= user.name %></h5>
+              
+            </div>
+          </div>
+         
+        </div>
+        <div class="row">
+          <div class="row">
+            <div class="col-12 col-xl-4">
+              <div class="card card-plain h-100">
+                
+                <div class="card-body p-3">
+                  <h6 class="text-uppercase text-body text-xs font-weight-bolder">Account</h6>
+                  <ul class="list-group">
+                    <li class="list-group-item border-0 px-0">
+                      <div class="form-check form-switch ps-0">
+                        <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault" checked>
+                        <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault">Email me when someone follows me</label>
+                      </div>
+                    </li>
+                    <li class="list-group-item border-0 px-0">
+                      <div class="form-check form-switch ps-0">
+                        <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault1">
+                        <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault1">Email me when someone answers on my post</label>
+                      </div>
+                    </li>
+                    <li class="list-group-item border-0 px-0">
+                      <div class="form-check form-switch ps-0">
+                        <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault2" checked>
+                        <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault2">Email me when someone mentions me</label>
+                      </div>
+                    </li>
+                  </ul>
+                 
+                </div>
               </div>
-              <div  class="d-none d-lg-flex align-items-center">
-                <div id="myNav" class="overlay">
-                  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-                  <div class="overlay-content">
-                    <a href="/">Logout</a>
-                    <a href="/profile">Profile</a>
-                    <a href="/admin">List an event</a>
-                    <a href="#">Contact</a>
+            </div>
+            <div class="col-12 col-xl-4">
+              <div class="card card-plain h-100">
+                <div class="card-header pb-0 p-3">
+                  <div class="row">
+                    
+                   
                   </div>
                 </div>
-                <span id="sandwich" onclick="openNav()">&#9776;</span>
-             </div>
-          </header>
- <h1>User Profile</h1>
- <div class="user-events-prof">
-  <% bookedEvents.forEach(event => { %>
+                <div class="card-body p-3">
+                  <hr class="horizontal gray-light my-4">
+                  <ul class="list-group">
+                    <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Email:</strong> &nbsp;  <%= user.email %></li>                    
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 mt-4">
+              <div class="mb-5 ps-3">
+                <h6 class="mb-1">Your Events</h6>
+              </div>
+              <div class="row">
+                <% bookedEvents.forEach(event => { %>
 
-            <figure>
 
-              <img src="<%= event.event.imagePath %>" alt="event image">
-              <figcaption><%= event.event.textbox4 %></figcaption>
-          </figure>
-          <% }); %>
+                <div class="col-xl-3 col-md-6 mb-xl-0 mb-4">
 
- </div>
+                  <div class="card card-blog card-plain">
+
+                    <div class="card-header p-0 mt-n4 mx-3">
+                      <a class="d-block shadow-xl border-radius-xl">
+                        <img src="<%= event.imagePath %>" alt="img-blur-shadow" class="img-fluid shadow border-radius-xl">
+                      </a>
+                    </div>
+                    <div class="card-body p-3">
+                      <p class="mb-0 text-sm">Project #2</p>
+                      <a href="javascript:;">
+                        <h5>
+                          <%= event.textbox4 %>
+                        </h5>
+                      </a>
+                      <p class="mb-4 text-sm">
+                        As Uber works through a huge amount of internal management turmoil.
+                      </p>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <button type="button" class="btn btn-outline-primary btn-sm mb-0">View Project</button>
+                      </div>
+                    </div>
+
+                  </div>
+
+
+                </div>
+                <% }); %>
+
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="footer py-4  ">
+      <div class="container-fluid">
+        <div class="row align-items-center justify-content-lg-between">
+          <div class="col-lg-6 mb-lg-0 mb-4">
+            <div class="copyright text-center text-sm text-muted text-lg-start">
+              © <script>
+                document.write(new Date().getFullYear())
+              </script>,
+              made with <i class="fa fa-heart"></i> by
+              <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Creative Tim</a>
+              for a better web.
+            </div>
+          </div>
+        
+        </div>
+      </div>
+    </footer>
+  </div>
+  <!--   Core JS Files   -->
+  <script src="../assets/js/core/popper.min.js"></script>
+  <script src="../assets/js/core/bootstrap.min.js"></script>
+  <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+  <script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+  </script>
+  <!-- Github buttons -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
 </body>
+
 </html>
 

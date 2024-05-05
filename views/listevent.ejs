@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>admin dashboard</title>
+    <link rel="stylesheet" href="/style2.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.3.1/dist/jsQR.min.js"></script>
+</head>
+
+<body id="admin">
+    <div id="admin_header">
+        <h1 id="admin_logo">crowwd</h1>
+        <a id="right-text" href="/">logout</a>
+    </div>
+    <div id="admin-form">
+        <form action="/submit" method="post" enctype="multipart/form-data" class="form-container">
+            <h2
+                style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">
+                General Information</h2>
+            <div class="admin-form-1 "
+                style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;font-weight: 400;color: #6f2232;">
+                <h3>Organiser's name</h3>
+                <input type="text" name="textbox1" placeholder="Enter your name" id="admin-textbox"><br>
+                <h3>Contact number</h3>
+                <input type="text" name="textbox2" placeholder="Enter your phone" id="admin-textbox"><br>
+                <h3>Organiser's address</h3>
+                <input type="text" name="textbox3" placeholder="Enter you address" id="admin-textbox"><br>
+            </div>
+            <h2
+                style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">
+                About The Event</h2>
+
+            <div class="admin-form-2"
+                style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;font-weight: 400;color: #6f2232;">
+                <h3>Name of the event</h3>
+                <input type="text" name="textbox4" placeholder="Enter the name for the event" id="admin-textbox">
+                <h3>Category of the event</h3>
+                <select name="dropdown1">
+                    <option value="Free">Free</option>
+                    <option value="Comedy">Comedy</option>
+                    <option value="Workshops">Workshops</option>
+                    <option value="Courses">Courses</option>
+                    <option value="Theatre">Theatre & Art</option>
+
+                </select>
+                <br>
+                <h3>Description of the event</h3>
+                <input type="text" name="textbox5" placeholder="say anything about the event...." id="admin-textbox">
+                <h3>Location of the event</h3>
+                <select id="citySelect" name="dropdown2">
+                    <option value="Alappuzha">Alappuzha</option>
+                    <option value="Thrissur">Thrissur</option>
+                    <option value="Palakkad">Palakkad</option>
+                    <option value="Malappuram">Malappuram</option>
+                    <option value="Manjeri">Manjeri</option>
+                    <option value="Thalassery">Thalassery</option>
+                    <option value="Kannur">Kannur</option>
+                    <option value="Kasaragod">Kasaragod</option>
+                    <option value="Kollam">Kollam</option>
+                    <option value="Neyyattinkara">Neyyattinkara</option>
+                    <option value="Kottayam">Kottayam</option>
+                    <option value="Pala">Pala</option>
+                    <option value="Aluva">Aluva</option>
+                    <option value="Angamaly">Angamaly</option>
+                    <option value="Thodupuzha">Thodupuzha</option>
+                    <option value="Muvattupuzha">Muvattupuzha</option>
+                    <option value="Perumbavoor">Perumbavoor</option>
+                    <option value="Kothamangalam">Kothamangalam</option>
+                    <option value="Vaikom">Vaikom</option>
+                    <option value="Cherthala">Cherthala</option>
+                    <option value="Changanassery">Changanassery</option>
+                    <option value="Kozhencherry">Kozhencherry</option>
+                    <option value="Adoor">Adoor</option>
+                    <option value="Pathanamthitta">Pathanamthitta</option>
+                    <option value="Pandalam">Pandalam</option>
+                    <option value="Kayamkulam">Kayamkulam</option>
+                    <option value="Mavelikkara">Mavelikkara</option>
+                    <option value="Chengannur">Chengannur</option>
+                    <option value="Thiruvalla">Thiruvalla</option>
+                    <option value="Punalur">Punalur</option>
+                    <option value="Paravur">Paravur</option>
+                    <option value="Kochi">Kochi</option>
+                    <option value="Kozhikode">Kozhikode</option>
+                    <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+                    <option value="Kollam">Kollam</option>
+                </select>
+                <h3>Date of the event</h3>
+                <input type="date" name="datePicker">
+
+                <br>
+                <h3>Total Tickets Available</h3>
+                <input type="number" name="totalTickets" placeholder="Enter total tickets available" id="quantity"
+                    pattern="[0-9]+">
+                <h3>Ticket price</h3>
+                <input type="number" name="ticketPrice" placeholder="ticket price in INR" id="price" pattern="[0-9]+">
+
+
+                <h3>Event venue</h3>
+                <input type="text" name="textbox6" placeholder="location" id="admin-textbox"><br>
+                <h3>Nearest bus point</h3>
+                <input type="text" name="textbox7" placeholder="eg:- angamaly"><br>
+                <h3>Nearest railway station</h3>
+                <input type="text" name="textbox8" placeholder="eg:- aluva railway station"><br>
+                <h3>Nearest airport</h3>
+                <input type="text" name="textbox9" placeholder="eg:- CIAL"><br>
+
+                <h3>Upload images of the event</h3>
+                <input type="file" name="imageUploader">
+                <br>
+                <br>
+                <button type="submit" id="admin-submit">Submit</button>
+            </div>
+
+        </form>
+    </div>
+
+    <% if (locals.messages && Array.isArray(locals.messages)) { %>
+        <% locals.messages.forEach(function(message) { %>
+            <div class="alert alert-success" role="alert">
+                <%= message %>
+            </div>
+            <% }); %>
+                <% } %>
+                    <video id="preview" style="display: none;"></video>
+                    <img id="admin-image" src="multicultural-people-crowd-diverse-person-group-vector-34881635.png"
+                        width="900">
+                    <script>
+
+                        document.getElementById('eventForm').addEventListener('submit', function (event) {
+                            // Prevent form submission
+                            event.preventDefault();
+
+                            // Check if all required fields are filled
+                            var isValid = true;
+                            var inputs = this.getElementsByTagName('input');
+                            for (var i = 0; i < inputs.length; i++) {
+                                if (inputs[i].type === 'text' && inputs[i].value === '') {
+                                    isValid = false;
+                                    break;
+                                }
+                            }
+
+                            var totalTicketsValue = parseInt(document.getElementsByName('totalTickets')[0].value);
+                            if (isNaN(totalTicketsValue)) {
+                                isValid = false;
+                                alert('Please enter a valid number for Total Tickets.');
+                            }
+
+                            if (isValid) {
+                                this.submit();
+                            } else {
+                                alert('Please fill in all required fields and ensure Total Tickets is a valid number.');
+                            }
+                        });
+                    </script>
+                    <script>
+                        document.getElementById('scanQR').addEventListener('click', function () {
+
+                            document.getElementById('preview').style.display = "block"
+                            const video = document.getElementById('preview');
+                            const canvas = document.createElement('canvas');
+                            canvas.width = 300;
+                            canvas.height = 300;
+                            canvas.style.display = 'none';
+                            document.body.appendChild(canvas);
+
+                            navigator.mediaDevices.getUserMedia({
+                                video: {
+                                    width: { ideal: 1280 },
+                                    height: { ideal: 720 }, facingMode: 'environment'
+                                }
+                            })
+                                .then(function (stream) {
+                                    video.srcObject = stream;
+                                    video.setAttribute('playsinline', true);
+                                    video.play();
+                                    requestAnimationFrame(scan);
+                                })
+                                .catch(function (err) {
+                                    console.error('Error accessing camera:', err);
+                                });
+
+                            let isScanning = true; // Flag to control the scanning loop
+
+                            async function scan() {
+                                if (!isScanning) return; // Exit the function if scanning is stopped
+
+                                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                                    const context = canvas.getContext('2d', { willReadFrequently: true });
+                                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                                    const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                                        inversionAttempts: 'dontInvert',
+                                    });
+
+                                    setTimeout(async () => {
+                                        if (isScanning) {
+                                            video.srcObject.getTracks().forEach(track => track.stop());
+                                            video.pause();
+                                            isScanning = false; // Stop the scanning loop
+                                            document.getElementById('preview').style.display = "none"
+                                        }
+                                    }, 10000)
+
+                                    if (code) {
+                                        console.log(code.data)
+                                    }
+                                }
+                                if (isScanning) {
+                                    requestAnimationFrame(scan);
+                                }
+
+                            }
+                        });
+
+
+
+
+
+                    </script>
+
+</body>
+
+</html>
+

@@ -5,7 +5,7 @@ const collection = require("./config");
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const crypto = require('crypto');
-const axios = require('axios'); 
+const axios = require('axios');
 const app = express();
 const dotenv = require("dotenv");
 const cookieParser = require('cookie-parser');
@@ -21,14 +21,14 @@ app.use(cookieParser('secret'));
 const Recaptcha = require('express-recaptcha').RecaptchaV2;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 const Razorpay = require("razorpay");
-const cors= require("cors");
+const cors = require("cors");
 app.use(cors());
 
 
 
 
 
-mongoose.connect(process.env.MONGO_URI, )
+mongoose.connect(process.env.MONGO_URI,)
   .then(() => console.log("mongoDB is connected"))
   .then(() => console.log("Database Connected Successfully"))
   .catch(err => console.error("Database Connection Error: ", err))
@@ -50,21 +50,38 @@ app.use(session({
 
 function ensureAuthenticated(req, res, next) {
   if (req.session && req.session.email) {
-     return next(); 
+    return next();
   }
   res.redirect('/');
- }
- const upload = multer({ 
+}
+const upload = multer({
   storage: multer.diskStorage({
-      destination: function (req, file, cb) {
-          cb(null, path.join(__dirname, '../public/uploads/')); // Destination folder
-      },
-      filename: function (req, file, cb) {
-          cb(null, file.originalname); 
-      }
+    destination: function (req, file, cb) {
+      cb(null, path.join(__dirname, '../public/uploads/')); // Destination folder
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname);
+    }
   })
 });
+async function calculateTotalAmountForToday(email) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set time to 00:00:00 to start of the day
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1); // Set time to start of the next day
 
+  const bookings = await Booking.find({
+    createdAt: { $gte: today, $lt: tomorrow },
+    userEmail: email // Filter by user email
+  });
+
+  let totalAmount = 0;
+  bookings.forEach(booking => {
+    totalAmount += booking.amount;
+  });
+
+  return totalAmount;
+}
 
 app.get("/", (req, res) => {
   res.render("login");
@@ -73,6 +90,8 @@ app.get("/register", (req, res) => {
   res.render("register", { message: "" });
 });
 
+
+
 app.post("/register", async (req, res) => {
   try {
     const data = {
@@ -80,7 +99,10 @@ app.post("/register", async (req, res) => {
       email: req.body.email,
       password: req.body.password,
       c_password: req.body.c_password,
-      user_type: req.body.user_type
+      user_type: req.body.user_type,
+      ac_number: req.body['ac-number'], // Additional field
+      ifsc_code: req.body['ifsc-number'], // Additional field
+      aadhar_no: req.body['aadhar-number'] 
     };
     if (data.password !== data.c_password) {
       res.render("register", { message: 'Passwords do not match.' });
@@ -91,7 +113,7 @@ app.post("/register", async (req, res) => {
       return;
     }
     const recaptchaResponse = req.body['g-recaptcha-response'];
-    const secretKey = '6LfaecYpAAAAAJhL0beZp0bundCEVMi8Lg1awPie'; 
+    const secretKey = '6LfaecYpAAAAAJhL0beZp0bundCEVMi8Lg1awPie';
     const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaResponse}`;
     const result = await axios.post(verificationUrl);
     const captchaData = result.data;
@@ -110,7 +132,10 @@ app.post("/register", async (req, res) => {
       name: data.name,
       email: data.email,
       password: hashedPassword,
-      user_type: data.user_type
+      user_type: data.user_type,
+      ac_number: data.ac_number, // Include the additional field
+      ifsc_code: data.ifsc_code, // Include the additional field
+      aadhar_no: data.aadhar_no 
     });
     await newUser.save();
     res.render("register", { message: 'User registered successfully.' });
@@ -135,21 +160,33 @@ app.post("/login", async (req, res) => {
     const secretKey = '6LfaecYpAAAAAJhL0beZp0bundCEVMi8Lg1awPie'; // Replace with your actual secret key
     const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaResponse}`;
     const result = await axios.post(verificationUrl);
-    const data = result.data;    
+    const data = result.data;
     const userEmail = req.session.email;
-    const events = await Image.find({ email: userEmail,email: { $exists: true } }); 
+    req.session.todays_date = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+
+    const events = await Image.find({ email: userEmail, email: { $exists: true } });
+    let grandTotal = 0;
+  
+    for (let event of events) {
+      const bookings = await Booking.find({ eventId: event._id });
+      const totalAmount = bookings.reduce((sum, booking) => sum + booking.amount, 0);
+      event.totalAmount = totalAmount; // Add the total amount to the event object
+      grandTotal += totalAmount;
+  
+    }
+    const todayAmount = await calculateTotalAmountForToday(userEmail); // Calculate total amount for today
     const images = await Image.find({}, { imagePath: 1, _id: 0 });
     const rankedEvents = await getRankedEvents();
     req.session.email = check.email;
-    req.session.name = check.name;
+    const name = req.session.name || 'Guest';
     if (!data.success) {
       return res.render('login', { errorMessage: 'validation failed. Please try again.' });
     }
     if (check.user_type === 'admin') {
-      res.render('admin', { name: check.name, events: events });
+      res.render('admin', { name: name, events: events, grandTotal: grandTotal,todayAmount: todayAmount });
     } else {
       res.render('home', { name: check.name, rankedEvents: rankedEvents, images: images });
-      console.log( req.session.email)
+      console.log(req.session.email)
     }
   } catch (error) {
     console.error(error);
@@ -161,7 +198,7 @@ async function getRankedEvents() {
     const topEvents = await Image.aggregate([
       {
         $lookup: {
-          from: 'tickets', 
+          from: 'tickets',
           localField: '_id',
           foreignField: 'eventId',
           as: 'ticketInfo'
@@ -197,14 +234,14 @@ async function getRankedEvents() {
     return topEvents;
   } catch (error) {
     console.error(error);
-    throw error; 
+    throw error;
   }
 }
 app.get('/home', ensureAuthenticated, async (req, res) => {
   try {
     const userEmail = req.session.email;
     const rankedEvents = await getRankedEvents();
-    const images = await Image.find({}, { imagePath: 1, _id: 0 }); 
+    const images = await Image.find({}, { imagePath: 1, _id: 0 });
     res.render('home', { name: req.session.name, rankedEvents: rankedEvents, images: images });
   } catch (error) {
     console.error(error);
@@ -232,7 +269,7 @@ const imageSchema = new mongoose.Schema({
   },
   clicks: {
     type: Number,
-    default: 0 
+    default: 0
   },
   ticketPrice: {
     type: Number,
@@ -246,9 +283,7 @@ app.post('/submit', upload.single('imageUploader'), async (req, res) => {
     const result = await cloudinary.uploader.upload(req.file.path);
     const imagePath = result.secure_url;
     const userEmail = req.session.email;
-    const events = await Image.find({ email: userEmail });
-    const name = req.session.name || 'Guest';
-    res.render('admin', { name: name, events: events }); 
+    const events = await Image.find({ email: userEmail, email: { $exists: true } }); // Fetch events by email
     const date = new Date(req.body.datePicker);
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -256,11 +291,11 @@ app.post('/submit', upload.single('imageUploader'), async (req, res) => {
     const formattedDate = `${year}-${month}-${day}`;
     let totalTickets = parseInt(req.body.totalTickets, 10);
     if (isNaN(totalTickets)) {
-      totalTickets = 0; 
+      totalTickets = 0;
     }
     let ticketPrice = parseInt(req.body.ticketPrice, 10);
     if (isNaN(ticketPrice)) {
-      ticketPrice = 0; 
+      ticketPrice = 0;
     }
     const image = new Image({
       email: userEmail,
@@ -305,13 +340,29 @@ const ticketSchema = new mongoose.Schema({
 });
 const Ticket = mongoose.model('Ticket', ticketSchema)
 
+
+
+
 app.get('/admin', ensureAuthenticated, async (req, res) => {
   const name = req.session.name || 'Guest';
   const userEmail = req.session.email; // Get the current session's email
-  const events = await Image.find({ email: userEmail,email: { $exists: true } }); // Fetch events by email
-  res.locals.messages = req.flash();
-  res.render('admin', { name: name, events: events }); 
+  const events = await Image.find({ email: userEmail, email: { $exists: true } }); // Fetch events by email
+  let grandTotal = 0;
+
+  const todayAmount = await calculateTotalAmountForToday(userEmail); // Calculate the sum
+  for (let event of events) {
+    const bookings = await Booking.find({ eventId: event._id });
+    const totalAmount = bookings.reduce((sum, booking) => sum + booking.amount, 0);
+    event.totalAmount = totalAmount; // Add the total amount to the event object
+    grandTotal += totalAmount;
+
+  }
+
+
+  res.render('admin', { name: name, events: events, grandTotal: grandTotal,todayAmount: todayAmount });
 });
+
+
 app.post('/search-events-by-date-and-location', async (req, res) => {
   const { fromDate, toDate, location } = req.body;
   const from = new Date(fromDate);
@@ -368,7 +419,7 @@ app.get('/bookings/:eventId', ensureAuthenticated, async (req, res) => {
       // Handle the case where no bookings are found
       // You might want to redirect to a different page or render a message
       return res.render('no-bookings-found', { eventId: eventId });
-    }    res.render('event-bookings', { bookings: bookings });
+    } res.render('event-bookings', { bookings: bookings });
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
@@ -377,7 +428,7 @@ app.get('/bookings/:eventId', ensureAuthenticated, async (req, res) => {
 
 
 
- 
+
 
 app.get('/filter-events', ensureAuthenticated, async (req, res) => {
   const dropdown1Value = req.query.dropdown1;
@@ -399,9 +450,9 @@ const userSchema = new mongoose.Schema({
   email: String,
   name: String,
   // other fields as necessary
- });
- 
- const User = mongoose.model('User', userSchema);
+});
+
+const User = mongoose.model('User', userSchema);
 
 
 app.post('/event-click', async (req, res) => {
@@ -419,7 +470,7 @@ app.post('/event-click', async (req, res) => {
   }
 });
 // Middleware to update database with click counts at the end of the session
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   // Check if session exists and has eventClicks data
   if (req.session && req.session.eventClicks) {
     const eventClicks = req.session.eventClicks;
@@ -440,17 +491,42 @@ app.use(function(req, res, next) {
 
 
 
-
 app.get('/profile', ensureAuthenticated, async (req, res) => {
   try {
     const userEmail = req.session.email;
-    const bookedEvents = await Booking.find({ email: userEmail }).populate('event');
-    res.render('profile', { bookedEvents: bookedEvents });
+    if (!userEmail) {
+      return res.status(401).send('Unauthorized'); // Ensure the user is logged in
+    }
+
+    const bookings = await Booking.find({ userEmail: userEmail });
+
+    // Extract event IDs from the bookings
+    const eventIds = bookings.map(booking => booking.eventId);
+
+    // Fetch event details for each booked event
+    let bookedEvents = await Promise.all(eventIds.map(async (eventId) => {
+      const event = await Image.findById(eventId);
+      if (!event) {
+        return null; // Return null if the event is not found
+      }
+      return event; // Return the event object
+    }));
+
+    // Filter out null values (in case some events were not found)
+    bookedEvents = bookedEvents.filter(event => event!== null);
+
+    const user = await User.findOne({ email: userEmail });
+
+    // Check if the user was found
+    if (!user) {
+      return res.status(404).send('User not found');
+    }    res.render('profile', { bookedEvents: bookedEvents,user:user });
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
   }
 });
+
 
 
 
@@ -472,34 +548,34 @@ app.get('/book-event/:id', async (req, res) => {
   const eventId = req.params.id;
   const event = await Image.findById(eventId);
   if (!event) {
-      return res.status(404).send('Event not found')
+    return res.status(404).send('Event not found')
   }
   res.render('booking', { event: event, eventId: eventId });
 });
 app.post('/book-event/id', async (req, res) => {
   try {
 
-     let eventId = req.params.id;
-     const event = await Image.findById(eventId) 
-     console.log(req.session.email)
-     const userEmail = req.session.email; 
-     console.log('Email from session:', userEmail);
-     const user = await User.findOne({ email: userEmail });
-     console.log('User found:', user)
-     if (!event) {
-       return res.status(404).send('Event not found');
-     }
-     console.log(`Rendering booking page for event:`, event);
-     res.render('booking', { event: event });
-     if (!user) {
-       return res.status(404).send('User not found');
-     }
-   } catch (error) {
-     console.error(error);
-     res.status(500).send('Server error');
+    let eventId = req.params.id;
+    const event = await Image.findById(eventId)
+    console.log(req.session.email)
+    const userEmail = req.session.email;
+    console.log('Email from session:', userEmail);
+    const user = await User.findOne({ email: userEmail });
+    console.log('User found:', user)
+    if (!event) {
+      return res.status(404).send('Event not found');
+    }
+    console.log(`Rendering booking page for event:`, event);
+    res.render('booking', { event: event });
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
   }
- });
- const BookingSchema = new mongoose.Schema({
+});
+const BookingSchema = new mongoose.Schema({
   bookingId: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true },
   fullName: String,
   aadharNumber: String,
@@ -507,9 +583,15 @@ app.post('/book-event/id', async (req, res) => {
   amount: Number,
   orderId: String,
   quantity: Number, // Store the quantity
-  userEmail: String, // Add this line to include the user's email
-
-});
+  userEmail: String, 
+  createdAt: { 
+    type: Date, 
+    default: Date.now, 
+    set: function(value) {
+      // Set the time part of the date to midnight (00:00:00.000)
+      value.setHours(0, 0, 0, 0);
+      return value;
+    }}});
 const Booking = mongoose.model('Booking', BookingSchema);
 
 app.post("/payment", async (req, res) => {
@@ -529,7 +611,7 @@ app.post("/payment", async (req, res) => {
     res.status(200).json({
       success: true,
       message: 'Payment order created successfully',
-      order:order
+      order: order
     });
   } catch (error) {
     console.error(error);
@@ -577,7 +659,14 @@ app.post("/saveBooking", async (req, res) => {
   }
 });
 
+app.get('/listevents', ensureAuthenticated, async (req, res) => {
+  res.locals.messages = req.flash();
+  res.render('listevent'); // Make sure 'listevent' is the correct view name
+});
 
+app.get('/billing', ensureAuthenticated, async (req, res) => {
+  res.render('billing'); // Make sure 'listevent' is the correct view name
+});
 
 
 

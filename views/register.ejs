@@ -6,6 +6,23 @@
     <title>Register</title>
     <link rel="stylesheet" href="/style.css">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userTypeSelect = document.getElementById('user_type');
+            const additionalInputs = document.getElementById('additional-inputs');
+
+            userTypeSelect.addEventListener('change', function() {
+                if (this.value === 'admin') {
+                    additionalInputs.style.display = 'block';
+                } else {
+                    additionalInputs.style.display = 'none';
+                }
+            });
+
+            // Initially hide the additional inputs
+            additionalInputs.style.display = 'none';
+        });
+    </script>
 
 
 </head>
@@ -42,6 +59,15 @@
                     <option value="admin">admin</option>
                  </select>
             </div>
+            <div id="additional-inputs" class="form-group-reg">
+                <!-- Additional input boxes for admin -->
+                <label for="ac-number">Your A/C no</label>
+                <input type="number" id="ac-number" name="ac-number" placeholder="Enter the A/C number">
+                <label for="ifsc-number">Your IFSC code</label>
+                <input type="text" id="ifsc-number" name="ifsc-number" placeholder="Enter the IFSC code">
+                <label for="aadhar-number">Your aadhar no</label>
+                <input type="text" id="aadhar-number" name="aadhar-number" placeholder="Enter the 12 digit aadhar number">
+            </div>
             
             <div id="captcha-reg" class="g-recaptcha" data-sitekey="6LfaecYpAAAAAA5g9g5XwOOGfwlHe98-XC58pZDP
             "></div>
@@ -61,6 +87,7 @@
         </form>
     </div>
    
+        
     
 </body>
 </html>

@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
+
 // Create Schema
 const Loginschema = new mongoose.Schema({
     name: {
-        type:String,
+        type: String,
         required: true
     },
     email: {
@@ -10,18 +11,28 @@ const Loginschema = new mongoose.Schema({
         required: true
     },
     password: {
-        type:String,
+        type: String,
         required: true
     },
     user_type: {
-        type:String,
+        type: String,
         required: true
     },
+    ac_number: { // New field
+        type: String,
+        required: false // Adjust based on whether this field is mandatory
+    },
+    ifsc_code: { // New field
+        type: String,
+        required: false // Adjust based on whether this field is mandatory
+    },
+    aadhar_no: { // New field
+        type: String,
+        required: false // Adjust based on whether this field is mandatory
+    }
 });
 
 // collection part
-const collection = new mongoose.model("users", Loginschema);
+const collection = mongoose.model("users", Loginschema);
 
 module.exports = collection;
-
-

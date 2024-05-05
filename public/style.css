@@ -78,18 +78,18 @@
     display: block;
     width: 100%;
     padding: 10px;
-    background-color: #ebb5cc;
-    color: red;
+    background-color:#c3073f;
+    color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 20px;
-    margin-top: 20px;
+    margin-top: 38px;
     
   }
 
   .submit-btn-reg:hover {
-    background-color: #4565a0;
+    background-color: red;
   }
 
   #backtologin{
