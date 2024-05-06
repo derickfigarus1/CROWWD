@@ -259,12 +259,16 @@ app.post("/login", async (req, res) => {
     const images = await Image.find({}, { imagePath: 1, _id: 0 });
     const rankedEvents = await getRankedEvents();
     const name = req.session.name || 'Guest';
+    const formattedGrandTotal = new Intl.NumberFormat().format(grandTotal);
+    const formattedtodayAmount = new Intl.NumberFormat().format(todayAmount);
+
+
 
     if (!data.success) {
       return res.render('login', { errorMessage: 'validation failed. Please try again.' });
     }
     if (check.user_type === 'admin') {
-      res.render('admin', { name: name, events: events, grandTotal: grandTotal,todayAmount: todayAmount });
+      res.render('admin', { name: name, events: events, grandTotal: formattedGrandTotal, todayAmount: formattedtodayAmount });
     } else {
       res.render('home', { name: check.name, rankedEvents: rankedEvents, images: images });
     }
@@ -394,9 +398,12 @@ app.get('/admin', ensureAuthenticated, async (req, res) => {
     grandTotal += totalAmount;
 
   }
+  const formattedGrandTotal = new Intl.NumberFormat().format(grandTotal);
+  const formattedtodayAmount = new Intl.NumberFormat().format(todayAmount);
 
 
-  res.render('admin', { name: name, events: events, grandTotal: grandTotal,todayAmount: todayAmount });
+
+  res.render('admin', { name: name, events: events, grandTotal: formattedGrandTotal, todayAmount: formattedtodayAmount  });
 });
 
 
@@ -689,6 +696,23 @@ app.get('/listevents', ensureAuthenticated, async (req, res) => {
   res.locals.messages = req.flash();
   res.render('listevent'); // Make sure 'listevent' is the correct view name
 });
+app.get('/dashboard_profile', ensureAuthenticated, async (req, res) => {
+
+try {
+    const userEmail = req.session.email;
+    if (!userEmail) {
+      return res.status(401).send('Unauthorized'); // Ensure the user is logged in
+    }
+
+    const user = await User.findOne({ email: userEmail });
+
+    if (!user) {
+      return res.status(404).send('User not found');
+    }    res.render('dashboard_profile', { user:user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }});
 
 app.get('/billing', ensureAuthenticated, async (req, res) => {
   try {
