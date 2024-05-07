@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Bookevent</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
     integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
@@ -95,7 +95,9 @@
     <form action="">
       <div class="row">
         <div class="col">
-          <h3 class="title"><%= event.textbox4 %></h3>
+          <h3 class="title">
+            <%= event.textbox4 %>
+          </h3>
           <div class="inputBox" id="name1">
             <span>full name :</span>
             <input type="text" id="name" name="name" required>
@@ -123,98 +125,106 @@
   </div>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script>
-    // Assuming event.ticketPrice is accessible globally or within a specific scope
     var ticketPrice = '<%= event.ticketPrice %>';
 
   </script>
-  
+
   <script>
 
 
 
     document.getElementById('rzp-button1').onclick = async function (e) {
-  e.preventDefault();
+      e.preventDefault();
 
-  if (!validateForm()) {
-    return; // Exit if validation fails
-  } else {
-    try {
-      var quantity = document.querySelector('.product-qty').value;
-      var totalAmount = parseFloat(ticketPrice * quantity).toFixed(2);
-      var fullName = document.getElementById('name').value;
-      var aadharNumber = document.getElementById('aadharNumber').value;
-
-      var formattedAmount = Math.floor(totalAmount * 100); // Convert to integer
-      let eventTicketPrice = formattedAmount; // Assuming this is the correct way to access the ticket price in your EJS template
-      let response = await fetch("http://localhost:5000/payment", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json"
-        },
-        body: JSON.stringify({
-          fullName: fullName,
-          aadharNumber: aadharNumber,
-          eventId: '<%= eventId %>', // Replace 'yourEventId' with the actual event ID
-          amount: formattedAmount,
-          quantity: quantity, // Include the quantity
-        })
-      }).catch(error => console.error('Fetch error:', error));
-
-      let orderData = await response.json();
-
-      console.log(orderData);
-
-      if (orderData && orderData.order && orderData.order.amount) {
-        var options = {
-          "key": "rzp_test_xcex1XJYL2Csgs", // Enter the Key ID generated from the Dashboard
-          "amount": orderData.order.amount.toString(), // Correctly access the amount
-          "currency": "INR",
-          "order_id": orderData.id,
-          "handler": async function (response) {
-            alert(response.razorpay_payment_id);
-            alert(response.razorpay_order_id);
-            alert(response.razorpay_signature);
-
-            // Send a request to your server to save the booking data after successful payment
-            let saveBookingResponse = await fetch("http://localhost:5000/saveBooking", {
-              method: "POST",
-              headers: {
-                "Content-type": "application/json"
-              },
-              body: JSON.stringify({
-                fullName: fullName,
-                aadharNumber: aadharNumber,
-                eventId: '<%= eventId %>',
-                amount: totalAmount,
-                quantity: quantity,
-              })
-            }).catch(error => console.error('Fetch error:', error));
-
-            let saveBookingData = await saveBookingResponse.json();
-            console.log(saveBookingData);
-          }
-        };
-        var rzp1 = new Razorpay(options);
-        rzp1.open();
+      if (!validateForm()) {
+        return; 
       } else {
-        console.error('Order data or amount is missing from the response');
+        try {
+          var quantity = document.querySelector('.product-qty').value;
+          var totalAmount = parseFloat(ticketPrice * quantity).toFixed(2);
+          var fullName = document.getElementById('name').value;
+          var aadharNumber = document.getElementById('aadharNumber').value;
+
+          var formattedAmount = Math.floor(totalAmount * 100); 
+          let eventTicketPrice = formattedAmount; 
+          let response = await fetch("http://localhost:5000/payment", {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json"
+            },
+            body: JSON.stringify({
+              fullName: fullName,
+              aadharNumber: aadharNumber,
+              eventId: '<%= eventId %>', 
+              amount: formattedAmount,
+              quantity: quantity, 
+            })
+          }).catch(error => console.error('Fetch error:', error));
+
+          let orderData = await response.json();
+
+          console.log(orderData);
+
+          if (orderData && orderData.order && orderData.order.amount) {
+            var options = {
+              "key": "rzp_test_xcex1XJYL2Csgs", 
+              "amount": orderData.order.amount.toString(), 
+              "currency": "INR",
+              "order_id": orderData.id,
+              "handler": async function (response) {
+                alert(response.razorpay_payment_id);
+                alert(response.razorpay_order_id);
+                alert(response.razorpay_signature);
+                let saveBookingResponse = await fetch("http://localhost:5000/saveBooking", {
+                  method: "POST",
+                  headers: {
+                    "Content-type": "application/json"
+                  },
+                  body: JSON.stringify({
+                    fullName: fullName,
+                    aadharNumber: aadharNumber,
+                    eventId: '<%= eventId %>',
+                    amount: totalAmount,
+                    quantity: quantity,
+                  })
+                }).catch(error => console.error('Fetch error:', error));
+
+                let saveBookingData = await saveBookingResponse.json();
+                console.log(saveBookingData);
+              }, "prefill": { 
+                "name":'<%= user.name %>' , 
+                "email": '<%= user.email %>',
+                "contact": '<%= user.contact %>' 
+              },
+              "notes": {
+                "address": "Crowwd Corporate Office"
+              },
+              "theme": {
+                "color": "#333"
+              }
+
+            };
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+          } else {
+            console.error('Order data or amount is missing from the response');
+          }
+        } catch (error) {
+          console.error('Error creating order:', error);
+        }
       }
-    } catch (error) {
-      console.error('Error creating order:', error);
     }
-  }
-}
 
 
 
 
     const totalTicketsElement = '<%= event.totalTickets %>';
     if (totalTicketsElement < 5) {
-    document.querySelector('.product-qty').setAttribute('max', totalTicketsElement);
-  } else {
-    document.querySelector('.product-qty').setAttribute('max', 5);
-  }
-  
+      document.querySelector('.product-qty').setAttribute('max', totalTicketsElement);
+    } else {
+      document.querySelector('.product-qty').setAttribute('max', 5);
+    }
+
 
 
 
@@ -289,22 +299,19 @@
 
 
     function validateForm() {
-      // Get form elements
       var name = document.getElementById('name').value;
       var aadharNumber = document.getElementById('aadharNumber').value;
       var productQty = document.querySelector('.product-qty').value;
 
-      // Check if all fields are filled out
       if (!name || !aadharNumber || productQty <= 0) {
         document.getElementById('result').textContent = 'Please fill out all fields';
         return false; // Prevent form submission
       }
 
-      // If all checks pass, allow form submission
       return true;
     }
 
-    
+
 
 
 

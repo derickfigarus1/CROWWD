@@ -21,11 +21,8 @@ const Recaptcha = require('express-recaptcha').RecaptchaV2;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 const Razorpay = require("razorpay");
 const cors = require("cors");
-const MongoStore = require('connect-mongo'); // Import MongoStore
-
+const MongoStore = require('connect-mongo'); 
 app.use(cors());
-
-
 
 
 
@@ -49,7 +46,7 @@ function ensureAuthenticated(req, res, next) {
 const upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, path.join(__dirname, '../public/uploads/')); // Destination folder
+      cb(null, path.join(__dirname, '../public/uploads/')); 
     },
     filename: function (req, file, cb) {
       cb(null, file.originalname);
@@ -57,24 +54,24 @@ const upload = multer({
   })
 });
 app.use(session({
-  cookie: { maxAge: 60000 },
+  cookie: { maxAge: 600000 },
   secret: process.env.SESSION_SECRET || 'crowwd123',
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: 'mongodb+srv://arunmanoj005:ioc8Yl567WUcMv02@Cluster1.zm5fy5d.mongodb.net/test?retryWrites=true&w=majority' }), // Use MongoDB as session store
+  store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }), // Use MongoDB as session store
 
 }));
 
 
 async function calculateTotalAmountForToday(email) {
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // Set time to 00:00:00 to start of the day
+  today.setHours(0, 0, 0, 0); 
   const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1); // Set time to start of the next day
+  tomorrow.setDate(tomorrow.getDate() + 1); 
 
   const bookings = await Booking.find({
     createdAt: { $gte: today, $lt: tomorrow },
-    userEmail: email // Filter by user email
+    userEmail: email 
   });
 
   let totalAmount = 0;
@@ -100,6 +97,10 @@ const Loginschema = new mongoose.Schema({
       type: String,
       required: true
   },
+  contact: {
+    type: String,
+    required: true
+},
   password: {
       type: String,
       required: true
@@ -108,17 +109,17 @@ const Loginschema = new mongoose.Schema({
       type: String,
       required: true
   },
-  ac_number: { // New field
+  ac_number: { 
       type: Number,
-      required: false // Adjust based on whether this field is mandatory
+      required: false 
   },
-  ifsc_code: { // New field
+  ifsc_code: { 
       type: String,
-      required: false // Adjust based on whether this field is mandatory
+      required: false 
   },
-  aadhar_no: { // New field
+  aadhar_no: { 
       type: String,
-      required: true // Adjust based on whether this field is mandatory
+      required: true 
   }
 });
 
@@ -135,9 +136,10 @@ app.post("/register", async (req, res) => {
       password: req.body.password,
       c_password: req.body.c_password,
       user_type: req.body.user_type,
-      ac_number: req.body['ac-number'], // Additional field
-      ifsc_code: req.body['ifsc-number'], // Additional field
-      aadhar_no: req.body['aadhar-number'] 
+      ac_number: req.body['ac-number'], 
+      ifsc_code: req.body['ifsc-number'], 
+      aadhar_no: req.body['aadhar-number'],
+      contact: req.body.contact 
     };
     if (data.password !== data.c_password) {
       res.render("register", { message: 'Passwords do not match.' });
@@ -148,7 +150,7 @@ app.post("/register", async (req, res) => {
       return;
     }
     const recaptchaResponse = req.body['g-recaptcha-response'];
-    const secretKey = '6LfaecYpAAAAAJhL0beZp0bundCEVMi8Lg1awPie';
+    const secretKey = process.env.CAPTCHA_SECRET;
     const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaResponse}`;
     const result = await axios.post(verificationUrl);
     const captchaData = result.data;
@@ -168,9 +170,10 @@ app.post("/register", async (req, res) => {
       email: data.email,
       password: hashedPassword,
       user_type: data.user_type,
-      ac_number: data.ac_number, // Include the additional field
-      ifsc_code: data.ifsc_code, // Include the additional field
-      aadhar_no: data.aadhar_no 
+      ac_number: data.ac_number, 
+      ifsc_code: data.ifsc_code, 
+      aadhar_no: data.aadhar_no,
+      contact:data.contact
     });
     await newUser.save();
     res.render("register", { message: 'User registered successfully.' });
@@ -230,20 +233,19 @@ app.post("/login", async (req, res) => {
     if (!check) {
       return res.render('login', { errorMessage: "User name cannot found!" });
     }
-    // Compare the hashed password from the database with the plain text password
     const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
     if (!isPasswordMatch) {
       return res.render('login', { errorMessage: "Wrong Password!" });
     }
     const recaptchaResponse = req.body['g-recaptcha-response'];
-    const secretKey = '6LfaecYpAAAAAJhL0beZp0bundCEVMi8Lg1awPie'; // Replace with your actual secret key
+    const secretKey = process.env.CAPTCHA_SECRET; 
     const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaResponse}`;
     const result = await axios.post(verificationUrl);
     const data = result.data;
 
-    req.session.email = check.email; // Assuming `check` is the user document fetched from the database
+    req.session.email = check.email; 
     const userEmail = req.session.email;
-    req.session.todays_date = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    req.session.todays_date = new Date().toISOString().split('T')[0]; 
 
     const events = await Image.find({ email: userEmail });
     let grandTotal = 0;
@@ -251,11 +253,11 @@ app.post("/login", async (req, res) => {
     for (let event of events) {
       const bookings = await Booking.find({ eventId: event._id });
       const totalAmount = bookings.reduce((sum, booking) => sum + booking.amount, 0);
-      event.totalAmount = totalAmount; // Add the total amount to the event object
+      event.totalAmount = totalAmount; 
       grandTotal += totalAmount;
   
     }
-    const todayAmount = await calculateTotalAmountForToday(userEmail); // Calculate total amount for today
+    const todayAmount = await calculateTotalAmountForToday(userEmail); 
     const images = await Image.find({}, { imagePath: 1, _id: 0 });
     const rankedEvents = await getRankedEvents();
     const name = req.session.name || 'Guest';
@@ -320,11 +322,10 @@ const imageSchema = new mongoose.Schema({
 const Image = mongoose.model('Image', imageSchema);
 app.post('/submit', upload.single('imageUploader'), async (req, res) => {
   try {
-    // Upload the image to Cloudinary
     const result = await cloudinary.uploader.upload(req.file.path);
     const imagePath = result.secure_url;
     const userEmail = req.session.email;
-    const events = await Image.find({ email: userEmail}); // Fetch events by email
+    const events = await Image.find({ email: userEmail}); 
     const date = new Date(req.body.datePicker);
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -386,26 +387,22 @@ const Ticket = mongoose.model('Ticket', ticketSchema)
 
 app.get('/admin', ensureAuthenticated, async (req, res) => {
   const name = req.session.name || 'Guest';
-  const userEmail = req.session.email; // Get the current session's email
-  const events = await Image.find({ email: userEmail}); // Fetch events by email
+  const userEmail = req.session.email; 
+  const events = await Image.find({ email: userEmail}); 
   let grandTotal = 0;
 
-  const todayAmount = await calculateTotalAmountForToday(userEmail); // Calculate the sum
+  const todayAmount = await calculateTotalAmountForToday(userEmail); 
   for (let event of events) {
     const bookings = await Booking.find({ eventId: event._id });
     const totalAmount = bookings.reduce((sum, booking) => sum + booking.amount, 0);
-    event.totalAmount = totalAmount; // Add the total amount to the event object
+    event.totalAmount = totalAmount; 
     grandTotal += totalAmount;
 
   }
   const formattedGrandTotal = new Intl.NumberFormat().format(grandTotal);
   const formattedtodayAmount = new Intl.NumberFormat().format(todayAmount);
-
-
-
   res.render('admin', { name: name, events: events, grandTotal: formattedGrandTotal, todayAmount: formattedtodayAmount  });
 });
-
 
 app.post('/search-events-by-date-and-location', async (req, res) => {
   const { fromDate, toDate, location } = req.body;
@@ -438,30 +435,26 @@ app.get('/event/:id', ensureAuthenticated, async (req, res) => {
   try {
     const eventId = req.params.id;
     const event = await Image.findById(eventId);
-    const email = req.session.email; // Get the email from the session
+    const email = req.session.email; 
 
     if (!event) {
       return res.status(404).send('Event not found');
     }
     const similarEvents = await Image.find({
       dropdown1: event.dropdown1,
-      _id: { $ne: eventId } // Exclude the current event
+      _id: { $ne: eventId } 
     });
     res.render('event-details', { event: event, similarEvents: similarEvents });
   } catch (error) {
     console.error(error);
   }
 });
-// In your Express.js server file (e.g., index.js)
 
 app.get('/bookings/:eventId', ensureAuthenticated, async (req, res) => {
   try {
     const eventId = req.params.eventId;
     const bookings = await Booking.find({ eventId: eventId });
-    // Check if bookings is an array and not null
     if (!Array.isArray(bookings) || bookings.length === 0) {
-      // Handle the case where no bookings are found
-      // You might want to redirect to a different page or render a message
       return res.render('no-bookings-found', { eventId: eventId });
     } res.render('event-bookings', { bookings: bookings });
   } catch (error) {
@@ -495,32 +488,26 @@ const QRCode = mongoose.model('QRCode', qrCodeSchema);
 app.post('/event-click', async (req, res) => {
   try {
     const { eventId } = req.body;
-    // Increment click count for the event in the session
     if (!req.session.eventClicks) {
       req.session.eventClicks = {};
     }
     req.session.eventClicks[eventId] = (req.session.eventClicks[eventId] || 0) + 1;
-    res.sendStatus(200); // Send a success response
+    res.sendStatus(200); 
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
   }
 });
-// Middleware to update database with click counts at the end of the session
 app.use(function (req, res, next) {
-  // Check if session exists and has eventClicks data
   if (req.session && req.session.eventClicks) {
     const eventClicks = req.session.eventClicks;
-    // Loop through eventClicks and update the Image collection
     Object.keys(eventClicks).forEach(async eventId => {
       try {
-        // Find the Image document by eventId and update the clicks field
         await Image.findByIdAndUpdate(eventId, { $inc: { clicks: eventClicks[eventId] } });
       } catch (error) {
         console.error('Error updating click count:', error);
       }
     });
-    // Clear eventClicks from the session
     delete req.session.eventClicks;
   }
   next();
@@ -532,29 +519,23 @@ app.get('/profile', ensureAuthenticated, async (req, res) => {
   try {
     const userEmail = req.session.email;
     if (!userEmail) {
-      return res.status(401).send('Unauthorized'); // Ensure the user is logged in
+      return res.status(401).send('Unauthorized'); 
     }
 
     const bookings = await Booking.find({ userEmail: userEmail });
-
-    // Extract event IDs from the bookings
     const eventIds = bookings.map(booking => booking.eventId);
-
-    // Fetch event details for each booked event
     let bookedEvents = await Promise.all(eventIds.map(async (eventId) => {
       const event = await Image.findById(eventId);
       if (!event) {
-        return null; // Return null if the event is not found
+        return null; 
       }
-      return event; // Return the event object
+      return event; 
     }));
 
-    // Filter out null values (in case some events were not found)
     bookedEvents = bookedEvents.filter(event => event!== null);
 
     const user = await User.findOne({ email: userEmail });
 
-    // Check if the user was found
     if (!user) {
       return res.status(404).send('User not found');
     }    res.render('profile', { bookedEvents: bookedEvents,user:user });
@@ -567,15 +548,12 @@ app.get('/profile', ensureAuthenticated, async (req, res) => {
 
 
 
-// Assuming you have a function to confirm the bookin
 app.get('/logout', (req, res) => {
-  // Destroy the session
   req.session.destroy((err) => {
     if (err) {
       console.error('Error destroying session:', err);
       return res.status(500).send('Error logging out');
     }
-    // Redirect the user to the login page after logout
     res.redirect('/');
   });
 });
@@ -584,10 +562,12 @@ app.get('/logout', (req, res) => {
 app.get('/book-event/:id', async (req, res) => {
   const eventId = req.params.id;
   const event = await Image.findById(eventId);
+  const userEmail = req.session.email;
+    const user = await User.findOne({ email: userEmail });
   if (!event) {
     return res.status(404).send('Event not found')
   }
-  res.render('booking', { event: event, eventId: eventId });
+  res.render('booking', { event: event, eventId: eventId,user:user });
 });
 app.post('/book-event/id', async (req, res) => {
   try {
@@ -599,7 +579,7 @@ app.post('/book-event/id', async (req, res) => {
     if (!event) {
       return res.status(404).send('Event not found');
     }
-    res.render('booking', { event: event });
+    res.render('booking', { event: event, user:user });
     if (!user) {
       return res.status(404).send('User not found');
     }
@@ -615,13 +595,12 @@ const BookingSchema = new mongoose.Schema({
   eventId: String,
   amount: Number,
   orderId: String,
-  quantity: Number, // Store the quantity
+  quantity: Number, 
   userEmail: String, 
   createdAt: { 
     type: Date, 
     default: Date.now, 
     set: function(value) {
-      // Set the time part of the date to midnight (00:00:00.000)
       value.setHours(0, 0, 0, 0);
       return value;
     }}});
@@ -654,19 +633,16 @@ app.post("/payment", async (req, res) => {
 app.post("/saveBooking", async (req, res) => {
   try {
     const { fullName, aadharNumber, eventId, amount, quantity } = req.body;
-    const bookingId = new mongoose.Types.ObjectId(); // This now correctly generates a new ObjectId
+    const bookingId = new mongoose.Types.ObjectId(); 
+    const userEmail = req.session.email;  
 
-    // Correctly assign userEmail from req.session
-    const userEmail = req.session.email;  // Retrieve the user's email from the session
-
-    // Assuming you have a Booking model defined
     const booking = new Booking({
       bookingId,
       fullName,
       aadharNumber,
       eventId,
       amount,
-      orderId: req.body.orderId, // Assuming the order ID is passed in the request body
+      orderId: req.body.orderId, 
       quantity,
       userEmail
     });
@@ -694,14 +670,14 @@ app.post("/saveBooking", async (req, res) => {
 
 app.get('/listevents', ensureAuthenticated, async (req, res) => {
   res.locals.messages = req.flash();
-  res.render('listevent'); // Make sure 'listevent' is the correct view name
+  res.render('listevent'); 
 });
 app.get('/dashboard_profile', ensureAuthenticated, async (req, res) => {
 
 try {
     const userEmail = req.session.email;
     if (!userEmail) {
-      return res.status(401).send('Unauthorized'); // Ensure the user is logged in
+      return res.status(401).send('Unauthorized'); 
     }
 
     const user = await User.findOne({ email: userEmail });
@@ -716,12 +692,9 @@ try {
 
 app.get('/billing', ensureAuthenticated, async (req, res) => {
   try {
-    // Retrieve the userEmail from the session
     const userEmail = req.session.email;
 
 const user = await User.findOne({ email: userEmail });
-
-    // Check if the user was found
     if (!user) {
       return res.status(404).send('User not found');
     }
@@ -732,18 +705,6 @@ res.render('billing', { user: user });
     res.status(500).send('Server error');
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {

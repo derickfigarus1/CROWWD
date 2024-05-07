@@ -92,11 +92,9 @@
 
   <div class="row w-100">
 
-    <!-- Image Column -->
     <div class="col-12 col-md-8">
       <img src="<%= event.imagePath %>" class="column-image" alt="Product Image">
     </div>
-    <!-- Product Details Column -->
     <div class="col-12 col-md-4">
       <h1>
         <%= event.textbox4 %>
@@ -204,7 +202,6 @@
     <p class="copyright-footer">crowwd &copy; 2024 All Rights Reserved </p>
   </footer>
 
-<!--scripts-->
   <script>
     let popup = document.getElementById("popup");
     function openPopup() {
@@ -231,24 +228,17 @@
   </script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Assuming the totalTickets value is directly accessible in the HTML
       const totalTicketsElement = '<%= event.totalTickets %>'
       const bookNowButton = document.querySelector('.btn.btn-success.mt-3');
-  
-      // Function to check if the event is sold out
-      function checkIfSoldOut() {
+        function checkIfSoldOut() {
         const totalTickets = totalTicketsElement;
         if (totalTickets > 0) {
-        // Show the "Book Now" button if there are tickets available
-        bookNowButton.style.display = 'inline-block'; // Adjust based on your actual button styling
+        bookNowButton.style.display = 'inline-block'; 
       }
       }
   
-      // Call the function initially to check the status
       checkIfSoldOut();
   
-      // Optionally, you can also call this function whenever the totalTickets value changes
-      // For example, if you have a mechanism to update the totalTickets value in real-time
     });
   </script>
   
