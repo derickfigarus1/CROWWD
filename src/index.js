@@ -2,12 +2,16 @@ const express = require("express");
 const session = require('express-session');
 const path = require("path");
 const bcrypt = require('bcrypt');
+const fs = require('fs'); // Add this line
+
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 const axios = require('axios');
 const app = express();
 const dotenv = require("dotenv");
 const cookieParser = require('cookie-parser');
+const QRCode = require('qrcode'); // Import the qrcode package
+
 const multer = require('multer');
 const flash = require('connect-flash');
 require('dotenv').config({ path: './src/.env' });
@@ -21,8 +25,10 @@ const Recaptcha = require('express-recaptcha').RecaptchaV2;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 const Razorpay = require("razorpay");
 const cors = require("cors");
-const MongoStore = require('connect-mongo'); 
+const MongoStore = require('connect-mongo');
 app.use(cors());
+var nodemailer = require('nodemailer');
+
 
 
 
@@ -46,7 +52,7 @@ function ensureAuthenticated(req, res, next) {
 const upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, path.join(__dirname, '../public/uploads/')); 
+      cb(null, path.join(__dirname, '../public/uploads/'));
     },
     filename: function (req, file, cb) {
       cb(null, file.originalname);
@@ -65,13 +71,13 @@ app.use(session({
 
 async function calculateTotalAmountForToday(email) {
   const today = new Date();
-  today.setHours(0, 0, 0, 0); 
+  today.setHours(0, 0, 0, 0);
   const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1); 
+  tomorrow.setDate(tomorrow.getDate() + 1);
 
   const bookings = await Booking.find({
     createdAt: { $gte: today, $lt: tomorrow },
-    userEmail: email 
+    userEmail: email
   });
 
   let totalAmount = 0;
@@ -90,43 +96,40 @@ app.get("/register", (req, res) => {
 });
 const Loginschema = new mongoose.Schema({
   name: {
-      type: String,
-      required: true
+    type: String,
+    required: true
   },
   email: {
-      type: String,
-      required: true
+    type: String,
+    required: true
   },
   contact: {
     type: String,
     required: true
-},
+  },
   password: {
-      type: String,
-      required: true
+    type: String,
+    required: true
   },
   user_type: {
-      type: String,
-      required: true
+    type: String,
+    required: true
   },
-  ac_number: { 
-      type: Number,
-      required: false 
+  ac_number: {
+    type: Number,
+    required: false
   },
-  ifsc_code: { 
-      type: String,
-      required: false 
+  ifsc_code: {
+    type: String,
+    required: false
   },
-  aadhar_no: { 
-      type: String,
-      required: true 
+  aadhar_no: {
+    type: String,
+    required: false
   }
 });
 
-// collection part
 const User = mongoose.model('User', Loginschema);
-
-
 
 app.post("/register", async (req, res) => {
   try {
@@ -136,10 +139,10 @@ app.post("/register", async (req, res) => {
       password: req.body.password,
       c_password: req.body.c_password,
       user_type: req.body.user_type,
-      ac_number: req.body['ac-number'], 
-      ifsc_code: req.body['ifsc-number'], 
+      ac_number: req.body['ac-number'],
+      ifsc_code: req.body['ifsc-number'],
       aadhar_no: req.body['aadhar-number'],
-      contact: req.body.contact 
+      contact: req.body.contact
     };
     if (data.password !== data.c_password) {
       res.render("register", { message: 'Passwords do not match.' });
@@ -170,10 +173,10 @@ app.post("/register", async (req, res) => {
       email: data.email,
       password: hashedPassword,
       user_type: data.user_type,
-      ac_number: data.ac_number, 
-      ifsc_code: data.ifsc_code, 
+      ac_number: data.ac_number,
+      ifsc_code: data.ifsc_code,
       aadhar_no: data.aadhar_no,
-      contact:data.contact
+      contact: data.contact
     });
     await newUser.save();
     res.render("register", { message: 'User registered successfully.' });
@@ -182,6 +185,9 @@ app.post("/register", async (req, res) => {
     res.render("register", { message: 'An error occurred while registering user.' });
   }
 });
+
+
+
 async function getRankedEvents() {
   try {
     const topEvents = await Image.aggregate([
@@ -238,26 +244,26 @@ app.post("/login", async (req, res) => {
       return res.render('login', { errorMessage: "Wrong Password!" });
     }
     const recaptchaResponse = req.body['g-recaptcha-response'];
-    const secretKey = process.env.CAPTCHA_SECRET; 
+    const secretKey = process.env.CAPTCHA_SECRET;
     const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaResponse}`;
     const result = await axios.post(verificationUrl);
     const data = result.data;
 
-    req.session.email = check.email; 
+    req.session.email = check.email;
     const userEmail = req.session.email;
-    req.session.todays_date = new Date().toISOString().split('T')[0]; 
+    req.session.todays_date = new Date().toISOString().split('T')[0];
 
     const events = await Image.find({ email: userEmail });
     let grandTotal = 0;
-  
+
     for (let event of events) {
       const bookings = await Booking.find({ eventId: event._id });
       const totalAmount = bookings.reduce((sum, booking) => sum + booking.amount, 0);
-      event.totalAmount = totalAmount; 
+      event.totalAmount = totalAmount;
       grandTotal += totalAmount;
-  
+
     }
-    const todayAmount = await calculateTotalAmountForToday(userEmail); 
+    const todayAmount = await calculateTotalAmountForToday(userEmail);
     const images = await Image.find({}, { imagePath: 1, _id: 0 });
     const rankedEvents = await getRankedEvents();
     const name = req.session.name || 'Guest';
@@ -325,7 +331,7 @@ app.post('/submit', upload.single('imageUploader'), async (req, res) => {
     const result = await cloudinary.uploader.upload(req.file.path);
     const imagePath = result.secure_url;
     const userEmail = req.session.email;
-    const events = await Image.find({ email: userEmail}); 
+    const events = await Image.find({ email: userEmail });
     const date = new Date(req.body.datePicker);
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -387,21 +393,21 @@ const Ticket = mongoose.model('Ticket', ticketSchema)
 
 app.get('/admin', ensureAuthenticated, async (req, res) => {
   const name = req.session.name || 'Guest';
-  const userEmail = req.session.email; 
-  const events = await Image.find({ email: userEmail}); 
+  const userEmail = req.session.email;
+  const events = await Image.find({ email: userEmail });
   let grandTotal = 0;
 
-  const todayAmount = await calculateTotalAmountForToday(userEmail); 
+  const todayAmount = await calculateTotalAmountForToday(userEmail);
   for (let event of events) {
     const bookings = await Booking.find({ eventId: event._id });
     const totalAmount = bookings.reduce((sum, booking) => sum + booking.amount, 0);
-    event.totalAmount = totalAmount; 
+    event.totalAmount = totalAmount;
     grandTotal += totalAmount;
 
   }
   const formattedGrandTotal = new Intl.NumberFormat().format(grandTotal);
   const formattedtodayAmount = new Intl.NumberFormat().format(todayAmount);
-  res.render('admin', { name: name, events: events, grandTotal: formattedGrandTotal, todayAmount: formattedtodayAmount  });
+  res.render('admin', { name: name, events: events, grandTotal: formattedGrandTotal, todayAmount: formattedtodayAmount });
 });
 
 app.post('/search-events-by-date-and-location', async (req, res) => {
@@ -435,14 +441,14 @@ app.get('/event/:id', ensureAuthenticated, async (req, res) => {
   try {
     const eventId = req.params.id;
     const event = await Image.findById(eventId);
-    const email = req.session.email; 
+    const email = req.session.email;
 
     if (!event) {
       return res.status(404).send('Event not found');
     }
     const similarEvents = await Image.find({
       dropdown1: event.dropdown1,
-      _id: { $ne: eventId } 
+      _id: { $ne: eventId }
     });
     res.render('event-details', { event: event, similarEvents: similarEvents });
   } catch (error) {
@@ -474,17 +480,6 @@ app.get('/filter-events', ensureAuthenticated, async (req, res) => {
 });
 
 
-const qrCodeSchema = new mongoose.Schema({
-  uniqueId: {
-    type: String,
-    required: true,
-    unique: true
-  },
-});
-
-const QRCode = mongoose.model('QRCode', qrCodeSchema);
-
-
 app.post('/event-click', async (req, res) => {
   try {
     const { eventId } = req.body;
@@ -492,7 +487,7 @@ app.post('/event-click', async (req, res) => {
       req.session.eventClicks = {};
     }
     req.session.eventClicks[eventId] = (req.session.eventClicks[eventId] || 0) + 1;
-    res.sendStatus(200); 
+    res.sendStatus(200);
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
@@ -519,7 +514,7 @@ app.get('/profile', ensureAuthenticated, async (req, res) => {
   try {
     const userEmail = req.session.email;
     if (!userEmail) {
-      return res.status(401).send('Unauthorized'); 
+      return res.status(401).send('Unauthorized');
     }
 
     const bookings = await Booking.find({ userEmail: userEmail });
@@ -527,18 +522,18 @@ app.get('/profile', ensureAuthenticated, async (req, res) => {
     let bookedEvents = await Promise.all(eventIds.map(async (eventId) => {
       const event = await Image.findById(eventId);
       if (!event) {
-        return null; 
+        return null;
       }
-      return event; 
+      return event;
     }));
 
-    bookedEvents = bookedEvents.filter(event => event!== null);
+    bookedEvents = bookedEvents.filter(event => event !== null);
 
     const user = await User.findOne({ email: userEmail });
 
     if (!user) {
       return res.status(404).send('User not found');
-    }    res.render('profile', { bookedEvents: bookedEvents,user:user });
+    } res.render('profile', { bookedEvents: bookedEvents, user: user });
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
@@ -563,11 +558,13 @@ app.get('/book-event/:id', async (req, res) => {
   const eventId = req.params.id;
   const event = await Image.findById(eventId);
   const userEmail = req.session.email;
-    const user = await User.findOne({ email: userEmail });
+  const user = await User.findOne({ email: userEmail });
   if (!event) {
     return res.status(404).send('Event not found')
   }
-  res.render('booking', { event: event, eventId: eventId,user:user });
+  console.log(user); // Debugging line
+
+  res.render('booking', { event: event, eventId: eventId, user: user });
 });
 app.post('/book-event/id', async (req, res) => {
   try {
@@ -579,7 +576,8 @@ app.post('/book-event/id', async (req, res) => {
     if (!event) {
       return res.status(404).send('Event not found');
     }
-    res.render('booking', { event: event, user:user });
+    console.log(user); // Debugging line
+    res.render('booking', { event: event, user: user });
     if (!user) {
       return res.status(404).send('User not found');
     }
@@ -595,15 +593,15 @@ const BookingSchema = new mongoose.Schema({
   eventId: String,
   amount: Number,
   orderId: String,
-  quantity: Number, 
-  userEmail: String, 
-  createdAt: { 
-    type: Date, 
-    default: Date.now, 
-    set: function(value) {
-      value.setHours(0, 0, 0, 0);
-      return value;
-    }}});
+  quantity: Number,
+  userEmail: String,
+  createdAt: {
+    type: Date,
+    default: Date.now // This will automatically set the createdAt field to the current date and time
+  },
+  qrCodeUrl: String,
+});
+
 const Booking = mongoose.model('Booking', BookingSchema);
 
 app.post("/payment", async (req, res) => {
@@ -633,8 +631,23 @@ app.post("/payment", async (req, res) => {
 app.post("/saveBooking", async (req, res) => {
   try {
     const { fullName, aadharNumber, eventId, amount, quantity } = req.body;
-    const bookingId = new mongoose.Types.ObjectId(); 
-    const userEmail = req.session.email;  
+    const bookingId = new mongoose.Types.ObjectId();
+    const userEmail = req.session.email;
+    // Define the path for the QR code
+    const qrCodePath = path.join(__dirname, '../public/uploads/', bookingId.toString() + '.png');
+
+    // Ensure the directory exists
+    if (!fs.existsSync(path.dirname(qrCodePath))) {
+      fs.mkdirSync(path.dirname(qrCodePath), { recursive: true });
+    }
+
+    // Generate QR code
+    await QRCode.toFile(qrCodePath, bookingId.toString());
+    const qrCodeResult = await cloudinary.uploader.upload(qrCodePath);
+    const qrCodeUrl = qrCodeResult.secure_url; // This is the Cloudinary URL for the QR code
+
+    // Delete the temporary QR code file after uploading to Cloudinary
+    fs.unlinkSync(qrCodePath);
 
     const booking = new Booking({
       bookingId,
@@ -642,9 +655,11 @@ app.post("/saveBooking", async (req, res) => {
       aadharNumber,
       eventId,
       amount,
-      orderId: req.body.orderId, 
+      orderId: req.body.orderId,
       quantity,
-      userEmail
+      userEmail,
+      qrCodeUrl: qrCodeUrl // Save the Cloudinary URL of the QR code
+
     });
 
     await booking.save();
@@ -656,6 +671,30 @@ app.post("/saveBooking", async (req, res) => {
     } else {
       console.error('Event not found');
     }
+
+    
+
+    var mailOptions = {
+      from: 'crowwd.in@gmail.com',
+      to: userEmail,
+      subject: 'Booking Confirmation',
+      html: '<p>Your Booking for the event <strong>' + eventId + '</strong> for the quantity <strong>' + quantity + '</strong> has been booked successfully.</p><img src="' + qrCodeUrl + '" alt="QR Code">'
+    };
+    var transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'crowwd.in@gmail.com',
+        pass:process.env.EMAIL_APP_PASS
+      }
+    });
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
 
     res.status(201).json({
       success: true,
@@ -670,36 +709,37 @@ app.post("/saveBooking", async (req, res) => {
 
 app.get('/listevents', ensureAuthenticated, async (req, res) => {
   res.locals.messages = req.flash();
-  res.render('listevent'); 
+  res.render('listevent');
 });
 app.get('/dashboard_profile', ensureAuthenticated, async (req, res) => {
 
-try {
+  try {
     const userEmail = req.session.email;
     if (!userEmail) {
-      return res.status(401).send('Unauthorized'); 
+      return res.status(401).send('Unauthorized');
     }
 
     const user = await User.findOne({ email: userEmail });
 
     if (!user) {
       return res.status(404).send('User not found');
-    }    res.render('dashboard_profile', { user:user });
+    } res.render('dashboard_profile', { user: user });
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
-  }});
+  }
+});
 
 app.get('/billing', ensureAuthenticated, async (req, res) => {
   try {
     const userEmail = req.session.email;
 
-const user = await User.findOne({ email: userEmail });
+    const user = await User.findOne({ email: userEmail });
     if (!user) {
       return res.status(404).send('User not found');
     }
 
-res.render('billing', { user: user });
+    res.render('billing', { user: user });
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');

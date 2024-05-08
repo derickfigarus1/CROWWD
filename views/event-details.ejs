@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
   <link rel="stylesheet" href="/style3.css">
 
 </head>
@@ -95,7 +94,7 @@
     <div class="col-12 col-md-8">
       <img src="<%= event.imagePath %>" class="column-image" alt="Product Image">
     </div>
-    <div class="col-12 col-md-4">
+,    <div class="col-12 col-md-4">
       <h1>
         <%= event.textbox4 %>
       </h1>
@@ -202,30 +201,7 @@
     <p class="copyright-footer">crowwd &copy; 2024 All Rights Reserved </p>
   </footer>
 
-  <script>
-    let popup = document.getElementById("popup");
-    function openPopup() {
-      popup.classList.add("open-popup");
-    }
-    function closePopup() {
-      document.getElementById("qrCode").innerHTML = "";
-      popup.classList.remove("open-popup");
-      location.reload();
-    }
-    $(document).ready(function () {
-      $('.box').click(function () {
-        var currentWidth = $('#searchInput').width();
-        $('#searchInput').css('width', currentWidth + 'px');
-      });
-    });
-    function openNav() {
-      document.getElementById("myNav").style.height = "100%";
-    }
-
-    function closeNav() {
-      document.getElementById("myNav").style.height = "0%";
-    }
-  </script>
+  
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const totalTicketsElement = '<%= event.totalTickets %>'
