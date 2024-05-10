@@ -1,54 +1,62 @@
+// Required modules
+
 const express = require("express");
 const session = require('express-session');
 const path = require("path");
 const bcrypt = require('bcrypt');
-const fs = require('fs'); // Add this line
-
+const fs = require('fs');
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 const axios = require('axios');
-const app = express();
 const dotenv = require("dotenv");
 const cookieParser = require('cookie-parser');
-const QRCode = require('qrcode'); // Import the qrcode package
-
+const QRCode = require('qrcode');
 const multer = require('multer');
 const flash = require('connect-flash');
-require('dotenv').config({ path: './src/.env' });
+const Recaptcha = require('express-recaptcha').RecaptchaV2;
+const cors = require("cors");
+const Razorpay = require("razorpay");
+const MongoStore = require('connect-mongo');
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+var nodemailer = require('nodemailer');
+
+// Initialize Express app
+const app = express();
+
+// Middleware setup
 app.use(flash());
 app.use(express.json());
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 app.use(cookieParser('secret'));
-const Recaptcha = require('express-recaptcha').RecaptchaV2;
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-const Razorpay = require("razorpay");
-const cors = require("cors");
-const MongoStore = require('connect-mongo');
 app.use(cors());
-var nodemailer = require('nodemailer');
 
+// Load environment variables
+require('dotenv').config({ path: './src/.env' });
 
-
-
+// Database connection
 mongoose.connect(process.env.MONGO_URI,)
   .then(() => console.log("Database Connected Successfully"))
   .catch(err => console.error("Database Connection Error: ", err))
 
-
+// Cloudinary configuration
 const cloudinary = require('cloudinary').v2;
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.API_KEY,
   api_secret: process.env.API_SECRET
 });
+
+// Middleware for ensuring authentication
 function ensureAuthenticated(req, res, next) {
   if (req.session && req.session.email) {
     return next();
   }
   res.redirect('/');
 }
+
+// Multer configuration for file uploads
 const upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
@@ -59,6 +67,8 @@ const upload = multer({
     }
   })
 });
+
+// Session middleware setup
 app.use(session({
   cookie: { maxAge: 600000 },
   secret: process.env.SESSION_SECRET || 'crowwd123',
@@ -74,12 +84,10 @@ async function calculateTotalAmountForToday(email) {
   today.setHours(0, 0, 0, 0);
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
-
   const bookings = await Booking.find({
     createdAt: { $gte: today, $lt: tomorrow },
     userEmail: email
   });
-
   let totalAmount = 0;
   bookings.forEach(booking => {
     totalAmount += booking.amount;
@@ -517,28 +525,30 @@ app.get('/profile', ensureAuthenticated, async (req, res) => {
       return res.status(401).send('Unauthorized');
     }
 
-    const bookings = await Booking.find({ userEmail: userEmail });
-    const eventIds = bookings.map(booking => booking.eventId);
-    let bookedEvents = await Promise.all(eventIds.map(async (eventId) => {
-      const event = await Image.findById(eventId);
-      if (!event) {
-        return null;
-      }
-      return event;
-    }));
-
-    bookedEvents = bookedEvents.filter(event => event !== null);
-
     const user = await User.findOne({ email: userEmail });
-
     if (!user) {
       return res.status(404).send('User not found');
-    } res.render('profile', { bookedEvents: bookedEvents, user: user });
+    }
+    // Fetch bookings for the user
+    const bookings = await Booking.find({ userEmail: userEmail }).populate('eventId');
+
+    // Map through bookings to fetch event details for each booking
+    const bookingsWithEventDetails = bookings.map(booking => {
+      const event = booking.eventId;
+      return {
+       ...booking.toObject(),
+        eventDetails: {
+          textbox4: event.textbox4 // Accessing textbox4 from the event document
+        }
+      };
+    });
+    res.render('profile', { user: user, bookings: bookingsWithEventDetails });
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
   }
 });
+
 
 
 
@@ -590,8 +600,10 @@ const BookingSchema = new mongoose.Schema({
   bookingId: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true },
   fullName: String,
   aadharNumber: String,
-  eventId: String,
-  amount: Number,
+  eventId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Image' // Reference to the Image model
+  },  amount: Number,
   orderId: String,
   quantity: Number,
   userEmail: String,
@@ -672,7 +684,7 @@ app.post("/saveBooking", async (req, res) => {
       console.error('Event not found');
     }
 
-    
+
 
     var mailOptions = {
       from: 'crowwd.in@gmail.com',
@@ -684,7 +696,7 @@ app.post("/saveBooking", async (req, res) => {
       service: 'gmail',
       auth: {
         user: 'crowwd.in@gmail.com',
-        pass:process.env.EMAIL_APP_PASS
+        pass: process.env.EMAIL_APP_PASS
       }
     });
 
