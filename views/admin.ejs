@@ -70,6 +70,11 @@ Dashboard  </title>
         </li>
       </ul>
     </div>
+    <div class="sidenav-footer position-absolute w-100 bottom-0 ">
+      <div class="mx-3">
+        <a class="btn btn-outline-primary mt-4 w-100" type="button" href="/verify-ticket">Verify Ticket</a>
+      </div>
+    </div>
     
   </aside>
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
@@ -87,7 +92,7 @@ Dashboard  </title>
             <li class="nav-item d-flex align-items-center">
               <a href="/" class="nav-link text-body font-weight-bold px-0">
                 <i class="fa fa-user me-sm-1"></i>
-                <span class="d-sm-inline d-none">Log In</span>
+                <span class="d-sm-inline d-none">Log Out</span>
               </a>
             </li>
           </ul>
@@ -283,6 +288,7 @@ Dashboard  </title>
   <script src="/assets/js/plugins/smooth-scrollbar.min.js"></script>
   <script src="/assets/js/plugins/chartjs.min.js"></script>
   <script>
+    
     var ctx = document.getElementById("chart-bars").getContext("2d");
 
     new Chart(ctx, {

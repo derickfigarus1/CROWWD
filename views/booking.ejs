@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link rel="stylesheet" href="/style3.css">
 </head>
@@ -109,8 +110,10 @@
             <div class="three-elements">
               <button class="qty-count qty-count--minus" data-action="minus" type="button">-</button>
               <input class="product-qty" type="number" name="product-qty" min="1" max="5" value="0">
-              <button class="qty-count qty-count--add" data-action="add" type="button" id="increase">+</button>
+              <button class="qty-count qty-count--add" data-action="add" type="button" id="increase">+
+              </button>
 
+              
             </div>
           </div>
           <div>
@@ -170,9 +173,6 @@
               "currency": "INR",
               "order_id": orderData.id,
               "handler": async function (response) {
-                alert(response.razorpay_payment_id);
-                alert(response.razorpay_order_id);
-                alert(response.razorpay_signature);
                 let saveBookingResponse = await fetch("http://localhost:5000/saveBooking", {
                   method: "POST",
                   headers: {

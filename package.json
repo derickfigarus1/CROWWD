@@ -22,6 +22,7 @@
     "express-recaptcha": "^5.1.0",
     "express-session": "^1.18.0",
     "g": "^2.0.1",
+    "html5-qrcode": "^2.3.8",
     "mongoose": "^8.3.1",
     "multer": "^1.4.4",
     "multer-gridfs-storage": "^5.0.2",

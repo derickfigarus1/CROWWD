@@ -198,7 +198,11 @@ padding-top: 20px;}
 
 .event-card img {
     width: 100%;
-    height: auto;
+    height: 300px;
+}
+.card-img-top{
+    width: 100%;
+    height: 300px;
 }
 
 .event-card h3, .event-card p, .event-card h4 {
@@ -791,7 +795,6 @@ body {
           cursor: pointer;
           width: 2.5rem;
           font-size: 1.25em;
-          text-indent: -100px;
           overflow: hidden;
           position: relative;
           

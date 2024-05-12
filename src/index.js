@@ -14,6 +14,7 @@ const QRCode = require('qrcode');
 const multer = require('multer');
 const flash = require('connect-flash');
 const Recaptcha = require('express-recaptcha').RecaptchaV2;
+const QrCode = require('html5-qrcode');
 const cors = require("cors");
 const Razorpay = require("razorpay");
 const MongoStore = require('connect-mongo');
@@ -66,7 +67,7 @@ const upload = multer({
       cb(null, file.originalname);
     }
   })
-});
+})
 
 // Session middleware setup
 app.use(session({
@@ -79,22 +80,7 @@ app.use(session({
 }));
 
 
-async function calculateTotalAmountForToday(email) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const bookings = await Booking.find({
-    createdAt: { $gte: today, $lt: tomorrow },
-    userEmail: email
-  });
-  let totalAmount = 0;
-  bookings.forEach(booking => {
-    totalAmount += booking.amount;
-  });
 
-  return totalAmount;
-}
 
 app.get("/", (req, res) => {
   res.render("login");
@@ -267,8 +253,10 @@ app.post("/login", async (req, res) => {
     for (let event of events) {
       const bookings = await Booking.find({ eventId: event._id });
       const totalAmount = bookings.reduce((sum, booking) => sum + booking.amount, 0);
-      event.totalAmount = totalAmount;
-      grandTotal += totalAmount;
+       console.log(totalAmount)
+    event.totalAmount = totalAmount;
+    grandTotal += totalAmount;
+    console.log(grandTotal)
 
     }
     const todayAmount = await calculateTotalAmountForToday(userEmail);
@@ -397,20 +385,38 @@ const ticketSchema = new mongoose.Schema({
 const Ticket = mongoose.model('Ticket', ticketSchema)
 
 
+async function calculateTotalAmountForToday(email) {
+ 
 
+}
 
 app.get('/admin', ensureAuthenticated, async (req, res) => {
   const name = req.session.name || 'Guest';
   const userEmail = req.session.email;
   const events = await Image.find({ email: userEmail });
   let grandTotal = 0;
-
-  const todayAmount = await calculateTotalAmountForToday(userEmail);
+  const now = new Date();
+  const today = new Date(now.getUTCFullYear() , now.getUTCMonth(), now.getUTCDate());
+  console.log(`Today: ${today.toISOString()}`);
+  const bookings = await Booking.find({
+    createdAt: {
+      $gte: today,
+      $lt: new Date(today.getTime() + 24*60*60*1000) // Add one day to today to include bookings up to the end of today
+    },
+    userEmail: email
+  });
+  let totalAmount = 0;
+  bookings.forEach(booking => {
+    totalAmount += booking.amount;
+  });
+  
   for (let event of events) {
     const bookings = await Booking.find({ eventId: event._id });
     const totalAmount = bookings.reduce((sum, booking) => sum + booking.amount, 0);
+    console.log(totalAmount)
     event.totalAmount = totalAmount;
     grandTotal += totalAmount;
+    console.log(grandTotal)
 
   }
   const formattedGrandTotal = new Intl.NumberFormat().format(grandTotal);
@@ -538,7 +544,9 @@ app.get('/profile', ensureAuthenticated, async (req, res) => {
       return {
        ...booking.toObject(),
         eventDetails: {
-          textbox4: event.textbox4 // Accessing textbox4 from the event document
+          textbox4: event.textbox4, // Accessing textbox4 from the event document
+          imagePath: event.imagePath, // Accessing textbox4 from the event document
+          datePicker: event.datePicker // Accessing textbox4 from the event document
         }
       };
     });
@@ -572,7 +580,6 @@ app.get('/book-event/:id', async (req, res) => {
   if (!event) {
     return res.status(404).send('Event not found')
   }
-  console.log(user); // Debugging line
 
   res.render('booking', { event: event, eventId: eventId, user: user });
 });
@@ -660,7 +667,7 @@ app.post("/saveBooking", async (req, res) => {
 
     // Delete the temporary QR code file after uploading to Cloudinary
     fs.unlinkSync(qrCodePath);
-
+    
     const booking = new Booking({
       bookingId,
       fullName,
@@ -677,9 +684,16 @@ app.post("/saveBooking", async (req, res) => {
     await booking.save();
 
     const event = await Image.findById(eventId);
+    const similarEvents = await Image.find({
+      dropdown1: event.dropdown1,
+      _id: { $ne: eventId }
+    });
     if (event) {
       event.totalTickets -= quantity;
       await event.save();
+      
+      res.render('event-details', { event: event, similarEvents: similarEvents });
+
     } else {
       console.error('Event not found');
     }
@@ -757,6 +771,29 @@ app.get('/billing', ensureAuthenticated, async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
+app.get('/verify-ticket', ensureAuthenticated , async (req, res) => {
+  res.render('verify');
+});
+
+
+app.post("/scan-success", async (req, res) => {
+  const decodedText = req.body.decodedText;
+  try {
+    const booking = await Booking.findOne({ bookingId: decodedText });
+    if (booking) {
+      res.json({id:booking.bookingId,name:booking.fullName,aadhar:booking.aadharNumber,quantity:booking.quantity});
+    } else {
+      // If no booking is found, send a response indicating failure
+      res.json({ message: "No booking found with the provided QR code." });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred while processing your request." });
+  }});
+
+
+
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {

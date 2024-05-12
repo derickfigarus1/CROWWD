@@ -90,13 +90,13 @@
   <div class="carousel-test">
     <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
       <div class="carousel-indicators">
-         <% images.forEach(function(image, index) { %>
+         <% images.slice(0, 5).forEach(function(image, index) { %>
            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="<%= index %>" class="<%= index === 0 ? 'active' : '' %>"></button>
          <% }); %>
       </div>
       <div class="carousel-inner">
-         <% images.forEach(function(image, index) { %>
-           <div class="carousel-item <%= index === 0 ? 'active' : '' %>" data-bs-interval="6000">
+         <%  images.slice(0, 5).forEach(function(image, index) { %>
+           <div class="carousel-item <%= index === 0 ? 'active' : '' %>" data-bs-interval="4000">
              <img src="<%= image.imagePath %>" class="d-block w-100" alt="...">
            </div>
          <% }); %>

@@ -1,0 +1,62 @@
+<!-- Index.html file -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styleqr.css">
+    <title>QR Code Scanner</title>
+</head>
+
+<body>
+    <div class="flex-container">
+    <div class="container">
+        <h1>Scan QR Codes</h1>
+        <div style="width: 500px" id="reader"></div>
+        <button id="restartScan">Start Scan Again</button>
+    </div>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        var html5QrcodeScanner;
+
+        function startScan() {
+            html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader", { fps: 10, qrbox: 250 });
+            html5QrcodeScanner.render(onScanSuccess);
+        }
+
+        async function onScanSuccess(decodedText, decodedResult) {
+            // Stop the scanner
+            html5QrcodeScanner.clear();
+
+            const res = await axios.post("/scan-success", { decodedText: decodedText });
+            const data = res.data;
+
+            document.getElementById("booking").innerHTML += `
+                <p><strong>Booking ID:</strong> ${data.id}</p>
+                <p><strong>Customer Name:</strong> ${data.name}</p>
+                <p><strong>Booking Date:</strong> ${data.aadhar}</p>
+                <p><strong>Quantity:</strong> ${data.quantity}</p>
+            `;
+        }
+
+        // Start scanning initially
+        startScan();
+
+        // Restart scanning when the button is clicked
+        document.getElementById("restartScan").addEventListener("click", function() {
+            document.getElementById("booking").innerHTML = ""; // Clear previous booking details
+            startScan(); // Start the scanner again
+        });
+    </script>
+    <div class="container1" id="booking">
+        <h1>Booking Details</h1>
+    </div>
+</div>
+
+</body>
+
+</html>
